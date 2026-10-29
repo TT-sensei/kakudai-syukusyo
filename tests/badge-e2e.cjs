@@ -50,7 +50,7 @@ async function main() {
       await correctOption.click();
       await page.locator('#scaleNext').click();
     }
-    await page.waitForURL('**/index.html?complete=scale', { timeout: 15000 });
+    await page.waitForURL(url => url.pathname.endsWith('/index.html') && url.searchParams.get('complete') === 'scale', { timeout: 15000 });
     await waitForBadgeManager(page);
     assert.match(await page.locator('#badgeCount').innerText(), /獲得 10 \/ 20/,
       '縮尺12問と2ミッションの完了で10バッジを獲得する');
@@ -85,6 +85,8 @@ async function main() {
     assert.equal(new Set(persistedIds).size, 20, '保存後も重複なし');
 
     await page.locator('#badgeCollection').evaluate(el => { el.open = true; });
+    const badgeImages = page.locator('#badgeGrid .badge-item img');
+    for (let i = 0; i < 20; i++) await badgeImages.nth(i).scrollIntoViewIfNeeded();
     await page.waitForFunction(() => {
       const imgs = Array.from(document.querySelectorAll('#badgeGrid .badge-item img'));
       return imgs.length === 20 && imgs.every(img => img.complete && img.naturalWidth > 0);
