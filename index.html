@@ -674,7 +674,7 @@ startDraw(0);
 setGuide($('#drawMsg'),'作図のポイント','Aから各頂点までの向きと距離を見よう。','hint');
 
 var scaleQuestions=[
- {id:'map-25000-4cm',legacyIndex:0,title:'遠足マップの道のり',scene:'map',sceneText:'遠足の目的地まで、地図で道のりをたどろう。',facts:['縮尺 1：25,000','地図上 4cm'],question:'地図上で道のりが4cm。実際の道のりは？',lead:'地図上の4cmを、実際の長さに直そう。',options:['100m','1km','10km'],correct:1,note:'4 × 25,000 ＝ 100,000cm。100,000cm ÷ 100,000 ＝ 1kmです。'},
+ {id:'map-25000-4cm',legacyIndex:0,title:'遠足マップの道のり',scene:'map',sceneText:'遠足の目的地まで、地図で道のりをたどろう。',facts:['縮尺 1：25,000','地図上 4cm'],question:'地図上で道のりが4cm。実際の道のりは？',lead:'地図上の4cmを、実際の長さに直そう。',options:['100m','1km','10km'],correct:1,note:'4 × 25,000 ＝ 100,000cm。100,000cm ＝ 1,000m ＝ 1kmです。'},
  {id:'drawing-500-3cm',legacyIndex:1,title:'校庭マップの通路',scene:'school',sceneText:'校庭の通路を、縮尺つきの案内図で表したよ。',facts:['縮尺 1：500','図の長さ 3cm'],question:'通路の長さは、実際には何m？',lead:'図の長さに縮尺の分母をかけて、mに直そう。',options:['1.5m','15m','150m'],correct:1,note:'3 × 500 ＝ 1,500cm。1,500cm ÷ 100 ＝ 15mです。'},
  {id:'actual-600m-20000',legacyIndex:2,title:'道を地図に描こう',scene:'map',sceneText:'実際の道のりが分かっているので、地図に表す長さを求めるよ。',facts:['実際 600m','縮尺 1：20,000'],question:'地図では、道のりを何cmで描けばいい？',lead:'600mを先にcmに直してから、縮尺の分母で割ろう。',options:['2cm','3cm','12cm'],correct:1,note:'600m ＝ 60,000cm。60,000 ÷ 20,000 ＝ 3cmです。'},
  {id:'drawing-1000-2-4cm',legacyIndex:3,title:'校舎の配置図',scene:'school',sceneText:'校舎と校庭の位置関係を、配置図にまとめたよ。',facts:['縮尺 1：1,000','図の長さ 2.4cm'],question:'図の2.4cmは、実際には何m？',lead:'まずcmで実際の長さを求め、そのあとmに直そう。',options:['2.4m','24m','240m'],correct:1,note:'2.4 × 1,000 ＝ 2,400cm。2,400cm ÷ 100 ＝ 24mです。'},
@@ -726,7 +726,7 @@ function renderScale(){
         if(optionButton.dataset.correct==='true')optionButton.classList.add('correct');
         else if(optionButton===button)optionButton.classList.add('incorrect');
       });
-      if(good){awardOnce('scale-'+q.id,10,'scale-'+q.legacyIndex);setGuide($('#scaleMsg'),'正解！',q.note,'correct','good');}
+      if(good){awardOnce('scale-'+q.id,10,q.legacyIndex===undefined?null:'scale-'+q.legacyIndex);setGuide($('#scaleMsg'),'正解！',q.note,'correct','good');}
       else{setGuide($('#scaleMsg'),'いっしょに確かめよう',q.note,'retry','retry');}
       $('#scaleBar').style.width=((scaleIndex+1)/scaleQuestions.length*100)+'%';
       $('#scaleNext').disabled=false;
