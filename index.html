@@ -31,6 +31,8 @@ h1{font-size:clamp(1.45rem,2.5vw,2.1rem);line-height:1.2;letter-spacing:-.025em;
 .tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:14px 0 12px}
 .tab{min-height:52px;border:1px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);font-weight:800;padding:9px 12px;text-align:left;cursor:pointer}
 .tab .num{display:inline-block;color:var(--teal);font-size:.78rem;margin-right:5px}
+.tab-status{font-size:.72rem;color:var(--green);font-weight:800;min-height:1em}
+.tab-status:empty{display:none}
 .tab.active{border:2px solid var(--blue);background:var(--blue-soft);color:#174fa9;padding:8px 11px}
 .panel{display:none}
 .panel.active{display:block}
@@ -125,10 +127,10 @@ h1{font-size:clamp(1.45rem,2.5vw,2.1rem);line-height:1.2;letter-spacing:-.025em;
 </div>
 
 <nav class="tabs" aria-label="学習モード">
-  <button class="tab active" data-mode="explore"><span class="num">01</span>形のきまり</button>
-  <button class="tab" data-mode="judge"><span class="num">02</span>見分ける</button>
-  <button class="tab" data-mode="draw"><span class="num">03</span>作図ラボ</button>
-  <button class="tab" data-mode="scale"><span class="num">04</span>縮尺を使う</button>
+  <button class="tab active" data-mode="explore"><span class="num">01</span>形のきまり<span class="tab-status" id="status-explore"></span></button>
+  <button class="tab" data-mode="judge"><span class="num">02</span>見分ける<span class="tab-status" id="status-judge"></span></button>
+  <button class="tab" data-mode="draw"><span class="num">03</span>作図ラボ<span class="tab-status" id="status-draw"></span></button>
+  <button class="tab" data-mode="scale"><span class="num">04</span>縮尺を使う<span class="tab-status" id="status-scale"></span></button>
 </nav>
 
 <section id="explore" class="panel active">
@@ -274,6 +276,31 @@ var GROUP_SHAPES = 'https://tt-sensei.github.io/navi-character-/assets/web/group
 var characterIds = ['riku','sora','kai','saku','tsuki','nami'];
 var score = 0;
 function addScore(points){score += points; $('#score').textContent = String(score);}
+var learningProgress = null;
+var completedThisSession = new Set();
+var moduleIds = ['explore','judge','draw','scale'];
+function renderProgress(){
+  moduleIds.forEach(function(id){
+    var status=$('#status-'+id);
+    if(!status)return;
+    var done=completedThisSession.has(id)||(learningProgress&&learningProgress.isCompleted(id));
+    status.textContent=done?'✓ 練習済み':'';
+    var tab=$('.tab').filter(function(button){return button.dataset.mode===id;})[0];
+    if(tab)tab.setAttribute('aria-label',tab.textContent.trim()+(done?'、練習済み':''));
+  });
+}
+function markModuleComplete(id){
+  completedThisSession.add(id);
+  if(learningProgress)learningProgress.complete(id);
+  renderProgress();
+}
+import('https://tt-sensei.github.io/edu-components/index.js').then(function(module){
+  var storage=new module.StorageManager('kakudai-syukusyo');
+  learningProgress=new module.ProgressManager({storage:storage,ids:moduleIds});
+  completedThisSession.forEach(function(id){learningProgress.complete(id);});
+  renderProgress();
+}).catch(function(){renderProgress();});
+renderProgress();
 function randomCharacter(){return characterIds[Math.floor(Math.random()*characterIds.length)];}
 function setGuide(container, title, message, mood, extraClass){
   if(!container) return;
@@ -345,6 +372,7 @@ $('#exploreCheck').addEventListener('click',function(){
     else if(exploreSelection[shape.id]){button.classList.add('wrong');mark.textContent='×';}
   });
   if(good){
+    markModuleComplete('explore');
     if(!exploreAwarded){addScore(20);exploreAwarded=true;}
     setGuide($('#exploreMsg'),'大正解！','正三角形・正方形・正五角形・円だよ。どこが共通しているか、一つずつ調べよう。','correct','good');
   }else{
@@ -408,7 +436,7 @@ $$('.choice').forEach(function(button){
 $('#judgeNext').addEventListener('click',function(){
   if(!judgeLocked)return;
   if(judgeIndex<judges.length-1){judgeIndex++;renderJudge();}
-  else{$$('.tab').filter(function(button){return button.dataset.mode==='draw';})[0].click();startDraw(0);}
+  else{markModuleComplete('judge');$('.tab').filter(function(button){return button.dataset.mode==='draw';})[0].click();startDraw(0);}
 });
 $('#judgeRestart').addEventListener('click',function(){judgeIndex=0;renderJudge();});
 renderJudge();
@@ -527,6 +555,7 @@ $('#drawReset').addEventListener('click',function(){startDraw(drawIndex);});
 $('#drawNext').addEventListener('click',function(){
   if(drawIndex<drawProblems.length-1)startDraw(drawIndex+1);
   else{
+    markModuleComplete('draw');
     setGuide($('#drawMsg'),'作図ラボ クリア！','角が変わらないことと、中心からの距離が同じ倍率になることを確認できたね。','complete','good');
     $('#drawNext').hidden=true;
   }
@@ -575,7 +604,7 @@ function renderScale(){
 $('#scaleNext').addEventListener('click',function(){
   if(!scaleLocked)return;
   if(scaleIndex<scaleQuestions.length-1){scaleIndex++;renderScale();}
-  else{scaleIndex=0;renderScale();}
+  else{markModuleComplete('scale');scaleIndex=0;renderScale();}
 });
 $('#scaleRestart').addEventListener('click',function(){scaleIndex=0;renderScale();});
 renderScale();
