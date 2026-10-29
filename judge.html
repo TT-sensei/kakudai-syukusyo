@@ -26,6 +26,32 @@
       <div class="question-title"><div><p class="section-label">CHECK</p><h2 id="judgeQ">この2つの図形は、拡大図・縮図の関係？</h2></div><span class="question-number" id="judgeNumber">第1問</span></div>
       <div class="progress-track"><div class="progress-fill" id="judgeBar"></div></div>
       <svg id="judgeVisual" class="judge-visual" viewBox="0 0 270 125" role="img" aria-label="大きさの異なる2つの図形"></svg>
+      <div class="overlay-tools">
+        <button class="btn secondary" id="overlayToggle" type="button" aria-expanded="false" aria-controls="overlayWorkbench">重ねて確かめる</button>
+        <span class="mini">図形を重ねて、角の大きさや形を比べよう。</span>
+      </div>
+      <section class="overlay-workbench" id="overlayWorkbench" hidden aria-label="図形を重ねて確かめる">
+        <p class="section-label">OVERLAY LAB</p>
+        <h3>青い図形とオレンジの図形を重ねよう</h3>
+        <p class="overlay-hint">オレンジの図形を指やマウスで動かして青い図形に重ねよう。大きさや向きも変えられるよ。</p>
+        <svg id="overlaySvg" class="overlay-visual" viewBox="0 0 360 240" role="img" aria-label="青い図形とオレンジの図形を重ねて比べる操作エリア"></svg>
+        <div class="overlay-controls">
+          <div class="range-control">
+            <label for="overlayScale">オレンジの大きさ <output id="overlayScaleValue">100%</output></label>
+            <input id="overlayScale" type="range" min="40" max="200" step="5" value="100">
+          </div>
+          <div class="range-control">
+            <label for="overlayRotate">オレンジの向き <output id="overlayRotateValue">0°</output></label>
+            <input id="overlayRotate" type="range" min="-180" max="180" step="5" value="0">
+          </div>
+        </div>
+        <div class="overlay-buttons">
+          <button class="btn secondary" id="overlayCenter" type="button">中心を合わせる</button>
+          <button class="btn secondary" id="overlayAngleToggle" type="button" aria-pressed="false">角の大きさを表示</button>
+          <button class="btn secondary" id="overlayReset" type="button">やり直す</button>
+        </div>
+        <p class="overlay-hint" id="overlayHint" aria-live="polite">オレンジの図形を動かして、青い図形と比べてみよう。</p>
+      </section>
       <div class="choice-grid">
         <button class="choice" data-answer="yes">〇　なっている</button>
         <button class="choice" data-answer="no">×　なっていない</button>
