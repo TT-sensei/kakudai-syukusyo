@@ -138,3 +138,10 @@ body.is-learning .subtitle,body.is-learning .group-image{display:none}
 .overlay-hint{margin:9px 0 0;font-size:.84rem;color:var(--sub)}
 .overlay-angle-label{font-size:11px;font-weight:900;paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round;pointer-events:none}
 @media(max-width:560px){.overlay-workbench{padding:9px}.overlay-controls{grid-template-columns:1fr}.overlay-buttons .btn{flex:1 1 auto}}
+
+/* 見分ける：操作が不慣れなときも位置を調整できるボタン */
+.overlay-nudge{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin-top:10px;font-size:.85rem;color:var(--sub)}
+.overlay-nudge button{min-width:44px;min-height:42px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink);font-size:1.15rem;font-weight:900;cursor:pointer}
+.overlay-nudge button:hover{border-color:var(--blue);background:var(--blue-soft)}
+.overlay-visual{cursor:grab}
+.overlay-visual:active{cursor:grabbing}

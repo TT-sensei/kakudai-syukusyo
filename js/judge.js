@@ -141,8 +141,21 @@ $('#overlayAngleToggle').addEventListener('click',function(){
   renderOverlay();
 });
 $('#overlayReset').addEventListener('click',resetOverlay);
+$$('[data-overlay-move]').forEach(function(button){
+  button.addEventListener('click',function(){
+    var direction=button.dataset.overlayMove;
+    if(direction==='up')overlayY-=12;
+    if(direction==='down')overlayY+=12;
+    if(direction==='left')overlayX-=12;
+    if(direction==='right')overlayX+=12;
+    overlayX=clamp(overlayX,35,325);
+    overlayY=clamp(overlayY,25,215);
+    renderOverlay();
+  });
+});
 overlaySvg.addEventListener('pointerdown',function(event){
-  if(!event.target.closest||!event.target.closest('[data-overlay-candidate="true"]'))return;
+  // SVG内の図形だけをつかめない端末もあるため、操作エリア内ならどこからでも移動を開始できるようにする。
+  if(event.button!==undefined&&event.button!==0)return;
   var p=svgCoordinates(event);
   overlayDrag={id:event.pointerId,dx:p.x-overlayX,dy:p.y-overlayY};
   try{overlaySvg.setPointerCapture(event.pointerId);}catch(ignore){}
