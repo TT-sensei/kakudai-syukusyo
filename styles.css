@@ -145,3 +145,44 @@ body.is-learning .subtitle,body.is-learning .group-image{display:none}
 .overlay-nudge button:hover{border-color:var(--blue);background:var(--blue-soft)}
 .overlay-visual{cursor:grab}
 .overlay-visual:active{cursor:grabbing}
+
+
+/* Badge collection: shared edu-assets WebP badges and persistent rewards */
+.badge-collection{margin-top:16px;border:1px solid var(--line);border-radius:16px;background:var(--paper);box-shadow:var(--shadow);overflow:hidden}
+.badge-collection summary{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px 17px;cursor:pointer;list-style:none}
+.badge-collection summary::-webkit-details-marker{display:none}
+.badge-collection summary::after{content:"＋";display:grid;place-items:center;flex:0 0 32px;width:32px;height:32px;border:1px solid var(--line);border-radius:10px;color:var(--blue);font-size:1.1rem;font-weight:900}
+.badge-collection[open] summary::after{content:"−"}
+.badge-collection-title{display:flex;flex-direction:column;gap:1px;min-width:0}
+.badge-collection-title .section-label{margin:0}
+.badge-collection-title strong{font-size:1.08rem}
+.badge-count{flex:0 0 auto;padding:6px 10px;border-radius:999px;background:var(--blue-soft);color:var(--blue);font-size:.84rem;font-weight:900;white-space:nowrap}
+.badge-collection-body{padding:0 14px 14px}
+.badge-collection-body>.lead{margin:0 2px 10px;font-size:.9rem}
+.badge-progress-track{height:8px;margin:0 2px 13px;border-radius:999px;background:#e5ebf2;overflow:hidden}
+.badge-progress-fill{height:100%;width:0;background:var(--teal);border-radius:inherit;transition:width .25s ease}
+.badge-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.badge-item{display:flex;flex-direction:column;align-items:center;min-width:0;padding:10px 7px 9px;border:1px solid var(--line);border-radius:12px;background:#fbfcfe;text-align:center}
+.badge-item img{display:block;width:clamp(48px,6vw,76px);height:clamp(48px,6vw,76px);object-fit:contain;margin:0 auto 6px}
+.badge-item.is-locked img{filter:grayscale(1);opacity:.36}
+.badge-item.is-earned{border-color:#b8dfca;background:#f3fbf6}
+.badge-item strong{font-size:.84rem;line-height:1.35;overflow-wrap:anywhere}
+.badge-item p{font-size:.73rem;line-height:1.4;color:var(--sub);margin:5px 0 7px;flex:1}
+.badge-status{display:inline-block;margin-top:auto;padding:3px 7px;border-radius:999px;background:#eef1f5;color:#617186;font-size:.68rem;font-weight:800}
+.badge-item.is-earned .badge-status{background:var(--green-soft);color:var(--green)}
+.badge-lab-link{margin:12px 2px 0;font-size:.82rem}
+.badge-lab-link a{color:var(--blue);font-weight:800}
+.badge-reward-notice{margin:0 0 14px;padding:13px 15px;border:1px solid #b8dfca;border-radius:14px;background:#f3fbf6}
+.badge-reward-copy{display:flex;align-items:baseline;flex-wrap:wrap;gap:8px}
+.badge-reward-copy strong{font-size:1.02rem;color:var(--green)}
+.badge-reward-count{font-size:.88rem;color:var(--sub)}
+.badge-reward-items{display:flex;align-items:start;gap:10px;flex-wrap:wrap;margin-top:10px}
+.badge-reward-item{display:flex;flex-direction:column;align-items:center;gap:4px;width:76px;text-align:center}
+.badge-reward-item img{display:block;width:56px;height:56px;object-fit:contain}
+.badge-reward-item span{font-size:.7rem;font-weight:800;line-height:1.25}
+.badge-reward-more{align-self:center;font-size:.8rem;color:var(--sub);font-weight:800}
+.badge-reward-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}
+.badge-reward-actions .btn{min-height:40px;padding:7px 12px;font-size:.86rem}
+@media(max-width:850px){.badge-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:560px){.badge-collection summary{padding:13px}.badge-collection-body{padding:0 9px 10px}.badge-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.badge-item{padding:8px 5px}.badge-item img{width:52px;height:52px}.badge-item strong{font-size:.79rem}.badge-item p{font-size:.68rem}.badge-reward-notice{padding:11px}.badge-reward-actions .btn{flex:1}}
+@media(max-width:360px){.badge-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
