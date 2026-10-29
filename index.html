@@ -215,13 +215,13 @@ h1{font-size:clamp(1.45rem,2.5vw,2.1rem);line-height:1.2;letter-spacing:-.025em;
   </div>
   <div class="stage">
     <div>
-      <svg id="board" class="board" viewBox="-0.5 -0.5 19 13" role="img" aria-label="方眼上に三角形と作図する点を置く場所"></svg>
-      <p class="mini">方眼の交点をタップして点を置こう。直角の頂点Aは動かさず、B′は右・C′は下へ置くよ。点のボタンを選ぶと置き直せるよ。</p>
+      <svg id="board" class="board" viewBox="-0.5 -0.5 13 9" role="img" aria-label="直角三角形を拡大・縮小する作図用の方眼"></svg>
+      <p class="mini">方眼の交点をタップして点を置こう。Aは直角の中心。B′は右、C′は下へ置くよ。点のボタンから置き直すこともできるよ。</p>
     </div>
     <section class="card">
       <div class="question-title"><div><p class="section-label">DRAWING TASK</p><h2 id="drawQ">第1問</h2></div><span class="question-number" id="drawNumber">1 / 5</span></div>
       <p class="lead" id="drawHelp"></p>
-      <div class="formula draw-formula" id="drawFormula"><b>まずは元の辺の長さを確認</b><p class="mini">ABは4マス、ACも4マス。倍率をかけると、B′・C′までの長さが決まるよ。</p></div>
+      <div class="formula draw-formula" id="drawFormula"><b>まずは元の辺の長さを確認</b><p class="mini">横のABは4マス、たてのACは2マス。倍率をかけると、B′・C′までの長さが決まるよ。</p></div>
       <div class="chips" id="chips"></div>
       <div class="message" id="drawMsg" aria-live="polite"><img class="navi-face" alt="" aria-hidden="true"><p class="navi-text"><strong>作図のポイント</strong>中心から、たて・横の方眼を数えよう。</p></div>
       <div class="actions"><button class="btn" id="drawCheck">チェック</button><button class="btn secondary" id="drawHint">ヒント① 方向</button><button class="btn secondary" id="drawReset">やり直す</button><button class="btn" id="drawNext" hidden>次の問題</button></div>
@@ -413,9 +413,9 @@ $('#judgeNext').addEventListener('click',function(){
 $('#judgeRestart').addEventListener('click',function(){judgeIndex=0;renderJudge();});
 renderJudge();
 
-var REL={A:[0,0],B:[4,0],C:[0,4]};
+var REL={A:[0,0],B:[4,0],C:[0,2]};
 var V=['A','B','C'];
-var drawProblems=[['A',2,[3,3]],['A',0.5,[3,3]],['A',1.5,[3,3]],['A',0.5,[8,2]],['A',2,[3,1]]];
+var drawProblems=[['A',2,[3,3]],['A',0.5,[3,3]],['A',1.5,[3,3]],['A',0.5,[7,2]],['A',2,[3,1]]];
 var D=null,drawIndex=0;
 function multiplierText(k){return k===0.5?'1/2倍':k===1.5?'1.5倍':k+'倍';}
 function pointString(point){return point[0]+','+point[1];}
@@ -433,7 +433,7 @@ function renderDraw(){
   $('#drawQ').textContent='第'+(drawIndex+1)+'問　'+D.center+'を中心に'+multiplierText(D.k)+'の'+(D.k>1?'拡大図':'縮図');
   $('#drawNumber').textContent=(drawIndex+1)+' / '+drawProblems.length;
   $('#drawHelp').textContent='Aを中心に'+multiplierText(D.k)+'。Aは動かさず、B′は右へ、C′は下へ置く。';
-  $('#drawFormula').innerHTML='<b>辺の長さに倍率をかける</b><p class="mini">ABは4マス、ACも4マス。B′は横方向、C′はたて方向に、倍率に合わせて動かそう。</p>';
+  $('#drawFormula').innerHTML='<b>辺の長さに倍率をかける</b><p class="mini">ABは横に4マス、ACはたてに2マス。B′とC′は、別々に倍率をかけて位置を決めよう。</p>';
   $('#chips').innerHTML=targets.map(function(v){
     var isPlaced=!!D.placed[v];
     return '<button type="button" class="chip'+(D.active===v?' active':'')+(isPlaced?' done':'')+'" data-v="'+v+'" aria-pressed="'+(D.active===v)+'">'+v+'′ '+(isPlaced?'●':'を置く')+'</button>';
@@ -448,8 +448,8 @@ function renderDraw(){
 }
 function drawBoard(){
   var svg=$('#board'),markup='';
-  for(var x=0;x<=18;x++)markup+='<line x1="'+x+'" y1="0" x2="'+x+'" y2="12" stroke="#d5dfeb" stroke-width=".045"/>';
-  for(var y=0;y<=12;y++)markup+='<line x1="0" y1="'+y+'" x2="18" y2="'+y+'" stroke="#d5dfeb" stroke-width=".045"/>';
+  for(var x=0;x<=12;x++)markup+='<line x1="'+x+'" y1="0" x2="'+x+'" y2="8" stroke="#d5dfeb" stroke-width=".045"/>';
+  for(var y=0;y<=8;y++)markup+='<line x1="0" y1="'+y+'" x2="12" y2="'+y+'" stroke="#d5dfeb" stroke-width=".045"/>';
   if(D.hintLevel>0){
     D.target.forEach(function(v){
       var a=D.abs[v],cx=D.centerPoint[0],cy=D.centerPoint[1];
@@ -484,8 +484,8 @@ $('#board').addEventListener('pointerdown',function(event){
   var svg=event.currentTarget,point=svg.createSVGPoint();
   point.x=event.clientX;point.y=event.clientY;
   var transformed=point.matrixTransform(svg.getScreenCTM().inverse());
-  if(transformed.x < -0.1 || transformed.x > 18.1 || transformed.y < -0.1 || transformed.y > 12.1)return;
-  var x=Math.max(0,Math.min(18,Math.round(transformed.x))),y=Math.max(0,Math.min(12,Math.round(transformed.y)));
+  if(transformed.x < -0.1 || transformed.x > 12.1 || transformed.y < -0.1 || transformed.y > 8.1)return;
+  var x=Math.max(0,Math.min(12,Math.round(transformed.x))),y=Math.max(0,Math.min(8,Math.round(transformed.y)));
   D.placed[D.active]=[x,y];
   var next=D.target.filter(function(v){return !D.placed[v];})[0];
   if(next)D.active=next;
@@ -502,7 +502,7 @@ $('#drawCheck').addEventListener('click',function(){
     wrong.forEach(function(v){delete D.placed[v];});D.active=wrong[0];
     var advice=wrong.map(function(v){
       if(v==='B')return 'B′はAと同じ高さで、Aから右へ'+(4*D.k)+'マスだよ。';
-      return 'C′はAと同じ縦の線上で、Aから下へ'+(4*D.k)+'マスだよ。';
+      return 'C′はAと同じ縦の線上で、Aから下へ'+(2*D.k)+'マスだよ。';
     }).join(' ');
     setGuide($('#drawMsg'),'ここを見直そう',advice,'retry','retry');
     renderDraw();
@@ -518,8 +518,8 @@ $('#drawHint').addEventListener('click',function(){
   if(D.hintLevel===1){
     setGuide($('#drawMsg'),'ヒント① 方向','B′はAから右、C′はAから下。もとの辺と同じ方向に置くよ。','hint');
   }else{
-    var length=4*D.k;
-    setGuide($('#drawMsg'),'ヒント② 距離','もとのABは4マス。4 × '+D.k+' ＝ '+length+'マスだから、B′はAから右へ'+length+'マス。ACも同じように、C′はAから下へ'+length+'マスだよ。','hint');
+    var horizontal=4*D.k,vertical=2*D.k;
+    setGuide($('#drawMsg'),'ヒント② 距離','ABは4マスなので、4 × '+D.k+' ＝ '+horizontal+'マス。B′は右へ'+horizontal+'マス。ACは2マスなので、2 × '+D.k+' ＝ '+vertical+'マス。C′は下へ'+vertical+'マスだよ。','hint');
   }
   renderDraw();
 });
