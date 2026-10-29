@@ -279,6 +279,7 @@ var GROUP_SHAPES = 'https://tt-sensei.github.io/navi-character-/assets/web/group
 var characterIds = ['riku','sora','kai','saku','tsuki','nami'];
 var scoreStoreKey='kakudai-syukusyo:score:v1';
 var awardsStoreKey='kakudai-syukusyo:awards:v1';
+var progressStoreKey='kakudai-syukusyo:completed:v1';
 function readStored(key,fallback){try{var value=localStorage.getItem(key);return value===null?fallback:JSON.parse(value);}catch(error){return fallback;}}
 function writeStored(key,value){try{localStorage.setItem(key,JSON.stringify(value));}catch(error){/* 保存できない環境でも学習は続けられる */}}
 var score = Number(readStored(scoreStoreKey,0))||0;
@@ -294,13 +295,14 @@ function awardOnce(key,points,legacyKey){
 }
 var learningProgress = null;
 var completedThisSession = new Set();
+var persistedCompleted = new Set(readStored(progressStoreKey,[]));
 var moduleIds = ['explore','judge','draw','scale'];
 var moduleLabels = {explore:'形のきまり',judge:'見分ける',draw:'作図ラボ',scale:'縮尺を使う'};
 function renderProgress(){
   moduleIds.forEach(function(id){
     var status=$('#status-'+id);
     if(!status)return;
-    var done=completedThisSession.has(id)||(learningProgress&&learningProgress.isCompleted(id));
+    var done=completedThisSession.has(id)||persistedCompleted.has(id)||(learningProgress&&learningProgress.isCompleted(id));
     status.textContent=done?'✓ 練習済み':'';
     var tab=$$('.tab').filter(function(button){return button.dataset.mode===id;})[0];
     if(tab)tab.setAttribute('aria-label',moduleLabels[id]+(done?'、練習済み':''));
@@ -308,6 +310,8 @@ function renderProgress(){
 }
 function markModuleComplete(id){
   completedThisSession.add(id);
+  persistedCompleted.add(id);
+  writeStored(progressStoreKey,Array.from(persistedCompleted));
   if(learningProgress)learningProgress.complete(id);
   renderProgress();
 }
@@ -315,6 +319,7 @@ import('https://tt-sensei.github.io/edu-components/index.js').then(function(modu
   var storage=new module.StorageManager('kakudai-syukusyo');
   learningProgress=new module.ProgressManager({storage:storage,ids:moduleIds});
   completedThisSession.forEach(function(id){learningProgress.complete(id);});
+  persistedCompleted.forEach(function(id){learningProgress.complete(id);});
   renderProgress();
 }).catch(function(){renderProgress();});
 renderProgress();
