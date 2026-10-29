@@ -48,6 +48,7 @@ $('#exploreCheck').addEventListener('click',function(){
     else if(exploreSelection[shape.id]){button.classList.add('wrong');mark.textContent='×';}
   });
   if(good){
+    window.TTSenseiApp.recordCorrectAnswer('explore','shape-classification');
     markModuleComplete('explore');
     if(!exploreAwarded){awardOnce('explore-perfect',20);exploreAwarded=true;}
     setGuide($('#exploreMsg'),'大正解！','正三角形・正方形・正五角形・円だよ。どこが共通しているか、一つずつ調べよう。','correct','good');
