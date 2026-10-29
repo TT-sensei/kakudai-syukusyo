@@ -157,7 +157,7 @@ $('#drawCheck').addEventListener('click',function(){
     setGuide($('#drawMsg'),'ここを見直そう',advice,'retry','retry');
     renderDraw();
   }else{
-    D.done=true;awardOnce('draw-'+D.shape.id+'-'+D.k,D.hintLevel>0?7:10);
+    D.done=true;window.TTSenseiApp.recordCorrectAnswer('draw',D.shape.id);awardOnce('draw-'+D.shape.id+'-'+D.k,D.hintLevel>0?7:10);
     setGuide($('#drawMsg'),'正解！','Aから各頂点までの横・たての位置が、すべて'+multiplierText(D.k)+'になっているよ。','complete','good');
     renderDraw();
   }
