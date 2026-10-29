@@ -145,7 +145,7 @@ h1{font-size:clamp(1.45rem,2.5vw,2.1rem);line-height:1.2;letter-spacing:-.025em;
         <button class="btn secondary" id="exploreReset">選び直す</button>
       </div>
       <div class="message" id="exploreMsg" aria-live="polite">
-        <img class="navi-face" src="https://tt-sensei.github.io/navi-character-/assets/web/characters/riku/fullbody/hint.webp" alt="" aria-hidden="true">
+        <img class="navi-face" alt="" aria-hidden="true">
         <p class="navi-text"><strong>見つけるポイント</strong>辺の長さだけでなく、角の大きさにも注目しよう。</p>
       </div>
       <section class="card" id="inspectCard" hidden>
@@ -187,7 +187,7 @@ h1{font-size:clamp(1.45rem,2.5vw,2.1rem);line-height:1.2;letter-spacing:-.025em;
         <button class="choice" data-answer="no">×　なっていない</button>
       </div>
       <div class="message" id="judgeMsg" aria-live="polite">
-        <img class="navi-face" src="https://tt-sensei.github.io/navi-character-/assets/web/characters/sora/fullbody/hint.webp" alt="" aria-hidden="true">
+        <img class="navi-face" alt="" aria-hidden="true">
         <p class="navi-text"><strong>考えてみよう</strong>角が同じか、辺の長さの割合が同じかを確かめよう。</p>
       </div>
       <div class="actions"><button class="btn" id="judgeNext" disabled>次の問題</button><button class="btn secondary" id="judgeRestart">最初から</button></div>
@@ -218,7 +218,7 @@ h1{font-size:clamp(1.45rem,2.5vw,2.1rem);line-height:1.2;letter-spacing:-.025em;
       <div class="question-title"><div><p class="section-label">DRAWING TASK</p><h2 id="drawQ">第1問</h2></div><span class="question-number" id="drawNumber">1 / 5</span></div>
       <p class="lead" id="drawHelp"></p>
       <div class="chips" id="chips"></div>
-      <div class="message" id="drawMsg" aria-live="polite"><img class="navi-face" src="https://tt-sensei.github.io/navi-character-/assets/web/characters/kai/fullbody/hint.webp" alt="" aria-hidden="true"><p class="navi-text"><strong>作図のポイント</strong>中心から、たて・横の方眼を数えよう。</p></div>
+      <div class="message" id="drawMsg" aria-live="polite"><img class="navi-face" alt="" aria-hidden="true"><p class="navi-text"><strong>作図のポイント</strong>中心から、たて・横の方眼を数えよう。</p></div>
       <div class="actions"><button class="btn" id="drawCheck">チェック</button><button class="btn secondary" id="drawHint">ヒント</button><button class="btn secondary" id="drawReset">やり直す</button><button class="btn" id="drawNext" hidden>次の問題</button></div>
     </section>
   </div>
@@ -241,7 +241,7 @@ h1{font-size:clamp(1.45rem,2.5vw,2.1rem);line-height:1.2;letter-spacing:-.025em;
       <div class="progress-track"><div class="progress-fill" id="scaleBar"></div></div>
       <p class="lead" id="scaleLead">地図や縮図の長さから、実際の長さを考えよう。</p>
       <div class="scale-options" id="scaleOptions"></div>
-      <div class="message" id="scaleMsg" aria-live="polite"><img class="navi-face" src="https://tt-sensei.github.io/navi-character-/assets/web/characters/tsuki/fullbody/hint.webp" alt="" aria-hidden="true"><p class="navi-text"><strong>考えるヒント</strong>まず単位をそろえよう。1mは100cmだよ。</p></div>
+      <div class="message" id="scaleMsg" aria-live="polite"><img class="navi-face" alt="" aria-hidden="true"><p class="navi-text"><strong>考えるヒント</strong>まず単位をそろえよう。1mは100cmだよ。</p></div>
       <div class="actions"><button class="btn" id="scaleNext" disabled>次の問題</button><button class="btn secondary" id="scaleRestart">最初から</button></div>
     </div>
     <aside class="card">
@@ -277,8 +277,8 @@ function setGuide(container, title, message, mood, extraClass){
   container.className = 'message' + (extraClass ? ' '+extraClass : '');
   if(img){
     img.style.display = '';
-    img.src = NAVI_ROOT + randomCharacter() + '/fullbody/' + (mood || 'hint') + '.webp';
     img.onerror = function(){img.style.display='none';};
+    img.src = NAVI_ROOT + randomCharacter() + '/fullbody/' + (mood || 'hint') + '.webp';
   }
   if(text) text.innerHTML = '<strong>' + title + '</strong>' + message;
 }
@@ -508,6 +508,7 @@ $('#drawNext').addEventListener('click',function(){
   }
 });
 startDraw(0);
+setGuide($('#drawMsg'),'作図のポイント','中心から、たて・横の方眼を数えよう。','hint');
 
 var scaleQuestions=[
  {question:'縮尺 1：25,000 の地図で、道のりが4cmでした。実際の道のりは？',lead:'1cmが実際の25,000cmを表します。',options:['100m','1km','10km'],correct:1,note:'4 × 25,000 ＝ 100,000cm。100,000cm ＝ 1,000m ＝ 1kmです。'},
