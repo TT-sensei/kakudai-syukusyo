@@ -217,11 +217,11 @@ h1{font-size:clamp(1.45rem,2.5vw,2.1rem);line-height:1.2;letter-spacing:-.025em;
   </div>
   <div class="stage">
     <div>
-      <svg id="board" class="board" viewBox="-0.5 -0.5 13 9" role="img" aria-label="三角形や四角形を拡大・縮小する作図用の方眼"></svg>
+      <svg id="board" class="board" viewBox="-0.5 -0.5 14 10" role="img" aria-label="三角形や四角形を拡大・縮小する作図用の方眼"></svg>
       <p class="mini">Aを中心に考えよう。点のボタンで置きたい頂点を選び、方眼の交点をタップ。置き直しもできるよ。</p>
     </div>
     <section class="card">
-      <div class="question-title"><div><p class="section-label">DRAWING TASK</p><h2 id="drawQ">第1問</h2></div><span class="question-number" id="drawNumber">1 / 5</span></div>
+      <div class="question-title"><div><p class="section-label">DRAWING TASK</p><h2 id="drawQ">第1問</h2></div><span class="question-number" id="drawNumber">1 / 8</span></div>
       <div class="progress-track"><div class="progress-fill" id="drawBar"></div></div>
       <p class="lead" id="drawHelp"></p>
       <div class="formula draw-formula" id="drawFormula"><b>中心からの位置を同じ倍率にする</b><p class="mini">Aから各頂点までの横・たての距離に、倍率をかけよう。</p></div>
@@ -455,9 +455,10 @@ var drawShapes=[
   {id:'isosceles-triangle',name:'二等辺三角形',vertices:['A','B','C'],points:{A:[0,0],B:[4,0],C:[2,4]}},
   {id:'scalene-triangle',name:'三角形',vertices:['A','B','C'],points:{A:[0,0],B:[6,0],C:[2,4]}},
   {id:'trapezoid',name:'台形',vertices:['A','B','C','D'],points:{A:[0,0],B:[6,0],C:[4,2],D:[2,2]}},
+  {id:'parallelogram',name:'平行四辺形',vertices:['A','B','C','D'],points:{A:[0,0],B:[4,0],C:[6,2],D:[2,2]}},
+  {id:'rhombus',name:'ひし形',vertices:['A','B','C','D'],points:{A:[0,0],B:[2,-2],C:[4,0],D:[2,2]}},
   {id:'rectangle',name:'長方形',vertices:['A','B','C','D'],points:{A:[0,0],B:[6,0],C:[6,2],D:[0,2]},rightAngleAtA:true},
-  {id:'square',name:'正方形',vertices:['A','B','C','D'],points:{A:[0,0],B:[4,0],C:[4,4],D:[0,4]},rightAngleAtA:true},
-  {id:'parallelogram',name:'平行四辺形',vertices:['A','B','C','D'],points:{A:[0,0],B:[4,0],C:[6,2],D:[2,2]}}
+  {id:'square',name:'正方形',vertices:['A','B','C','D'],points:{A:[0,0],B:[4,0],C:[4,4],D:[0,4]},rightAngleAtA:true}
 ];
 var drawMultipliers=[0.5,1.5,2];
 function randomInteger(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
@@ -471,13 +472,20 @@ function shuffle(items){
 function createDrawProblems(){
   return shuffle(drawShapes.slice()).map(function(shape){
     var k=drawMultipliers[Math.floor(Math.random()*drawMultipliers.length)];
-    var maxX=0,maxY=0;
+    var bounds={minX:Infinity,maxX:-Infinity,minY:Infinity,maxY:-Infinity};
     shape.vertices.forEach(function(v){
       var p=shape.points[v];
-      maxX=Math.max(maxX,p[0],p[0]*k);
-      maxY=Math.max(maxY,p[1],p[1]*k);
+      [p,[p[0]*k,p[1]*k]].forEach(function(q){
+        bounds.minX=Math.min(bounds.minX,q[0]);
+        bounds.maxX=Math.max(bounds.maxX,q[0]);
+        bounds.minY=Math.min(bounds.minY,q[1]);
+        bounds.maxY=Math.max(bounds.maxY,q[1]);
+      });
     });
-    return {shape:shape,k:k,origin:[randomInteger(0,Math.floor(12-maxX)),randomInteger(0,Math.floor(8-maxY))]};
+    var minOriginX=Math.ceil(1-bounds.minX),maxOriginX=Math.floor(13-bounds.maxX);
+    var minOriginY=Math.ceil(1-bounds.minY),maxOriginY=Math.floor(9-bounds.maxY);
+    if(minOriginX>maxOriginX||minOriginY>maxOriginY)throw new Error('方眼に収まらない図形があります: '+shape.name);
+    return {shape:shape,k:k,origin:[randomInteger(minOriginX,maxOriginX),randomInteger(minOriginY,maxOriginY)]};
   });
 }
 var drawProblems=createDrawProblems(),D=null,drawIndex=0;
@@ -529,12 +537,12 @@ function renderDraw(){
 }
 function drawBoard(){
   var svg=$('#board'),markup='';
-  for(var x=0;x<=12;x++)markup+='<line x1="'+x+'" y1="0" x2="'+x+'" y2="8" stroke="#d5dfeb" stroke-width=".045"/>';
-  for(var y=0;y<=8;y++)markup+='<line x1="0" y1="'+y+'" x2="12" y2="'+y+'" stroke="#d5dfeb" stroke-width=".045"/>';
+  for(var x=0;x<=13;x++)markup+='<line x1="'+x+'" y1="0" x2="'+x+'" y2="9" stroke="#d5dfeb" stroke-width=".045"/>';
+  for(var y=0;y<=9;y++)markup+='<line x1="0" y1="'+y+'" x2="13" y2="'+y+'" stroke="#d5dfeb" stroke-width=".045"/>';
   if(D.hintLevel>0){
     D.target.forEach(function(v){
       var a=D.abs[v],cx=D.centerPoint[0],cy=D.centerPoint[1];
-      var factor=D.k>1?D.k+0.2:1.25;
+      var factor=1.2;
       markup+='<line x1="'+cx+'" y1="'+cy+'" x2="'+(cx+(a[0]-cx)*factor)+'" y2="'+(cy+(a[1]-cy)*factor)+'" stroke="#b85a13" stroke-width=".09" stroke-dasharray=".22 .18"/>';
     });
   }
@@ -548,11 +556,17 @@ function drawBoard(){
   });
   var points={};
   D.vertices.forEach(function(v){points[v]=v===D.center?D.centerPoint:D.placed[v];});
-  if(D.vertices.every(function(v){return !!points[v];})){
+  var allTargetPointsPlaced=D.vertices.every(function(v){return !!points[v];});
+  if(allTargetPointsPlaced){
     markup+='<polygon points="'+D.vertices.map(function(v){return pointString(points[v]);}).join(' ')+'" fill="rgba(184,90,19,.16)" stroke="#b85a13" stroke-width=".12"/>';
     if(D.shape.rightAngleAtA){
       var ta=points[D.center];
       markup+='<path d="M '+(ta[0]+.28)+' '+ta[1]+' L '+(ta[0]+.28)+' '+(ta[1]+.28)+' L '+ta[0]+' '+(ta[1]+.28)+'" fill="none" stroke="#b85a13" stroke-width=".1"/>';
+    }
+  }else{
+    for(var edge=0;edge<D.vertices.length;edge++){
+      var from=points[D.vertices[edge]],to=points[D.vertices[(edge+1)%D.vertices.length]];
+      if(from&&to)markup+='<line x1="'+from[0]+'" y1="'+from[1]+'" x2="'+to[0]+'" y2="'+to[1]+'" stroke="#b85a13" stroke-width=".12" stroke-linecap="round"/>';
     }
   }
   D.target.forEach(function(v){
