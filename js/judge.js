@@ -141,7 +141,7 @@ $('#overlayAngleToggle').addEventListener('click',function(){
   renderOverlay();
 });
 $('#overlayReset').addEventListener('click',resetOverlay);
-$('[data-overlay-move]').forEach(function(button){
+$$('[data-overlay-move]').forEach(function(button){
   button.addEventListener('click',function(){
     var direction=button.dataset.overlayMove;
     if(direction==='up')overlayY-=12;
