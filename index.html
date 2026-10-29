@@ -206,20 +206,21 @@ h1{font-size:clamp(1.45rem,2.5vw,2.1rem);line-height:1.2;letter-spacing:-.025em;
 <section id="draw" class="panel">
   <div class="card goal" style="margin-bottom:12px">
     <p class="section-label">DRAW</p>
-    <h2>中心を決めて、拡大図・縮図をかこう</h2>
-    <p class="lead">中心から各頂点までの位置を、同じ倍率にするよ。中心にした点は動かさない。</p>
+    <h2>まずは直角三角形で、かいてみよう</h2>
+    <p class="lead">Aは直角の頂点で、中心になる点だよ。B′は横、C′はたてに動かすので、最初の作図でも迷いにくい形だよ。</p>
   </div>
   <div class="stage">
     <div>
       <svg id="board" class="board" viewBox="-0.5 -0.5 19 13" role="img" aria-label="方眼上に三角形と作図する点を置く場所"></svg>
-      <p class="mini">方眼の交点をタップして点を置こう。置いた点は、点のボタンを選ぶと置き直せるよ。</p>
+      <p class="mini">方眼の交点をタップして点を置こう。直角の頂点Aは動かさず、B′は右・C′は下へ置くよ。点のボタンを選ぶと置き直せるよ。</p>
     </div>
     <section class="card">
       <div class="question-title"><div><p class="section-label">DRAWING TASK</p><h2 id="drawQ">第1問</h2></div><span class="question-number" id="drawNumber">1 / 5</span></div>
       <p class="lead" id="drawHelp"></p>
+      <div class="formula draw-formula" id="drawFormula"><b>まずは元の辺の長さを確認</b><p class="mini">ABは4マス、ACも4マス。倍率をかけると、B′・C′までの長さが決まるよ。</p></div>
       <div class="chips" id="chips"></div>
       <div class="message" id="drawMsg" aria-live="polite"><img class="navi-face" alt="" aria-hidden="true"><p class="navi-text"><strong>作図のポイント</strong>中心から、たて・横の方眼を数えよう。</p></div>
-      <div class="actions"><button class="btn" id="drawCheck">チェック</button><button class="btn secondary" id="drawHint">ヒント</button><button class="btn secondary" id="drawReset">やり直す</button><button class="btn" id="drawNext" hidden>次の問題</button></div>
+      <div class="actions"><button class="btn" id="drawCheck">チェック</button><button class="btn secondary" id="drawHint">ヒント① 方向</button><button class="btn secondary" id="drawReset">やり直す</button><button class="btn" id="drawNext" hidden>次の問題</button></div>
     </section>
   </div>
   <div class="card" style="margin-top:12px">
@@ -408,9 +409,9 @@ $('#judgeNext').addEventListener('click',function(){
 $('#judgeRestart').addEventListener('click',function(){judgeIndex=0;renderJudge();});
 renderJudge();
 
-var REL={A:[0,0],B:[4,-2],C:[6,2]};
+var REL={A:[0,0],B:[4,0],C:[0,4]};
 var V=['A','B','C'];
-var drawProblems=[['A',2,[3,6]],['A',0.5,[6,6]],['B',2,[6,4]],['C',0.5,[7,6]],['A',1.5,[3,6]]];
+var drawProblems=[['A',2,[3,3]],['A',0.5,[3,3]],['A',1.5,[3,3]],['A',0.5,[8,2]],['A',2,[3,1]]];
 var D=null,drawIndex=0;
 function multiplierText(k){return k===0.5?'1/2倍':k===1.5?'1.5倍':k+'倍';}
 function pointString(point){return point[0]+','+point[1];}
@@ -420,14 +421,15 @@ function startDraw(index){
   V.forEach(function(v){abs[v]=[origin[0]+REL[v][0],origin[1]+REL[v][1]];});
   var centerPoint=abs[center];
   V.forEach(function(v){ans[v]=[centerPoint[0]+k*(abs[v][0]-centerPoint[0]),centerPoint[1]+k*(abs[v][1]-centerPoint[1])];});
-  D={center:center,k:k,abs:abs,ans:ans,centerPoint:centerPoint,target:V.filter(function(v){return v!==center;}),placed:{},active:V.filter(function(v){return v!==center;})[0],hint:false,done:false};
+  D={center:center,k:k,abs:abs,ans:ans,centerPoint:centerPoint,target:V.filter(function(v){return v!==center;}),placed:{},active:V.filter(function(v){return v!==center;})[0],hintLevel:0,done:false};
   renderDraw();
 }
 function renderDraw(){
   var targets=D.target;
   $('#drawQ').textContent='第'+(drawIndex+1)+'問　'+D.center+'を中心に'+multiplierText(D.k)+'の'+(D.k>1?'拡大図':'縮図');
   $('#drawNumber').textContent=(drawIndex+1)+' / '+drawProblems.length;
-  $('#drawHelp').textContent=targets.map(function(v){return v+'′';}).join('・')+'を打とう。中心の'+D.center+'は動かさない。';
+  $('#drawHelp').textContent='Aを中心に'+multiplierText(D.k)+'。Aは動かさず、B′は右へ、C′は下へ置く。';
+  $('#drawFormula').innerHTML='<b>辺の長さに倍率をかける</b><p class="mini">ABは4マス、ACも4マス。B′は横方向、C′はたて方向に、倍率に合わせて動かそう。</p>';
   $('#chips').innerHTML=targets.map(function(v){
     var isPlaced=!!D.placed[v];
     return '<button type="button" class="chip'+(D.active===v?' active':'')+(isPlaced?' done':'')+'" data-v="'+v+'" aria-pressed="'+(D.active===v)+'">'+v+'′ '+(isPlaced?'●':'を置く')+'</button>';
@@ -435,19 +437,24 @@ function renderDraw(){
   $$('.chip').forEach(function(button){button.addEventListener('click',function(){D.active=button.dataset.v;renderDraw();});});
   $('#drawNext').hidden=!D.done;
   $('#drawCheck').disabled=D.done;
+  $('#drawHint').textContent=D.hintLevel===0?'ヒント① 方向':D.hintLevel===1?'ヒント② 距離':'ヒントを確認済み';
+  $('#drawHint').disabled=D.hintLevel>=2||D.done;
   drawBoard();
 }
 function drawBoard(){
   var svg=$('#board'),markup='';
   for(var x=0;x<=18;x++)markup+='<line x1="'+x+'" y1="0" x2="'+x+'" y2="12" stroke="#d5dfeb" stroke-width=".045"/>';
   for(var y=0;y<=12;y++)markup+='<line x1="0" y1="'+y+'" x2="18" y2="'+y+'" stroke="#d5dfeb" stroke-width=".045"/>';
-  if(D.hint){
+  if(D.hintLevel>0){
     D.target.forEach(function(v){
-      var a=D.abs[v],cx=D.centerPoint[0],cy=D.centerPoint[1],factor=1.8;
-      markup+='<line x1="'+cx+'" y1="'+cy+'" x2="'+(cx+(a[0]-cx)*factor)+'" y2="'+(cy+(a[1]-cy)*factor)+'" stroke="#b85a13" stroke-width=".08" stroke-dasharray=".22 .18"/>';
+      var a=D.abs[v],cx=D.centerPoint[0],cy=D.centerPoint[1];
+      var factor=D.k>1?D.k+0.55:1;
+      markup+='<line x1="'+cx+'" y1="'+cy+'" x2="'+(cx+(a[0]-cx)*factor)+'" y2="'+(cy+(a[1]-cy)*factor)+'" stroke="#b85a13" stroke-width=".09" stroke-dasharray=".22 .18"/>';
     });
   }
   markup+='<polygon points="'+V.map(function(v){return pointString(D.abs[v]);}).join(' ')+'" fill="rgba(35,101,204,.12)" stroke="#2365cc" stroke-width=".12"/>';
+  var a=D.centerPoint;
+  markup+='<path d="M '+(a[0]+.38)+' '+a[1]+' L '+(a[0]+.38)+' '+(a[1]+.38)+' L '+a[0]+' '+(a[1]+.38)+'" fill="none" stroke="#2365cc" stroke-width=".1"/>';
   V.forEach(function(v){
     markup+='<text x="'+D.abs[v][0]+'" y="'+(D.abs[v][1]-.42)+'" text-anchor="middle" font-size=".66" font-weight="bold" fill="#174fa9">'+v+'</text>';
   });
@@ -455,6 +462,8 @@ function drawBoard(){
   V.forEach(function(v){points[v]=v===D.center?D.centerPoint:D.placed[v];});
   if(V.every(function(v){return !!points[v];})){
     markup+='<polygon points="'+V.map(function(v){return pointString(points[v]);}).join(' ')+'" fill="rgba(184,90,19,.16)" stroke="#b85a13" stroke-width=".12"/>';
+    var ta=points[D.center];
+    markup+='<path d="M '+(ta[0]+.28)+' '+ta[1]+' L '+(ta[0]+.28)+' '+(ta[1]+.28)+' L '+ta[0]+' '+(ta[1]+.28)+'" fill="none" stroke="#b85a13" stroke-width=".1"/>';
   }
   D.target.forEach(function(v){
     var p=points[v];
@@ -486,18 +495,28 @@ $('#drawCheck').addEventListener('click',function(){
   var wrong=D.target.filter(function(v){return D.placed[v][0]!==D.ans[v][0]||D.placed[v][1]!==D.ans[v][1];});
   if(wrong.length){
     wrong.forEach(function(v){delete D.placed[v];});D.active=wrong[0];
-    setGuide($('#drawMsg'),'ここを見直そう','中心から、たてと横の方眼を同じ倍率にしているかな？','retry','retry');
+    var advice=wrong.map(function(v){
+      if(v==='B')return 'B′はAと同じ高さで、Aから右へ'+(4*D.k)+'マスだよ。';
+      return 'C′はAと同じ縦の線上で、Aから下へ'+(4*D.k)+'マスだよ。';
+    }).join(' ');
+    setGuide($('#drawMsg'),'ここを見直そう',advice,'retry','retry');
     renderDraw();
   }else{
-    D.done=true;addScore(D.hint?7:10);
+    D.done=true;addScore(D.hintLevel>0?7:10);
     setGuide($('#drawMsg'),'正解！','中心から各頂点までの距離が、すべて'+multiplierText(D.k)+'になっているよ。','complete','good');
     renderDraw();
   }
 });
 $('#drawHint').addEventListener('click',function(){
-  D.hint=true;
-  setGuide($('#drawMsg'),'ヒント','赤い点線は、中心から頂点へ向かう方向だよ。方向を見てから、距離を倍率に合わせよう。','hint');
-  drawBoard();
+  if(D.done||D.hintLevel>=2)return;
+  D.hintLevel++;
+  if(D.hintLevel===1){
+    setGuide($('#drawMsg'),'ヒント① 方向','B′はAから右、C′はAから下。もとの辺と同じ方向に置くよ。','hint');
+  }else{
+    var length=4*D.k;
+    setGuide($('#drawMsg'),'ヒント② 距離','もとのABは4マス。4 × '+D.k+' ＝ '+length+'マスだから、B′はAから右へ'+length+'マス。ACも同じように、C′はAから下へ'+length+'マスだよ。','hint');
+  }
+  renderDraw();
 });
 $('#drawReset').addEventListener('click',function(){startDraw(drawIndex);});
 $('#drawNext').addEventListener('click',function(){
