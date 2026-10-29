@@ -21,6 +21,8 @@ header{display:flex;align-items:center;justify-content:space-between;gap:18px;ma
 h1{font-size:clamp(1.45rem,2.5vw,2.1rem);line-height:1.2;letter-spacing:-.025em;margin:0}
 .subtitle{margin:7px 0 0;color:var(--sub);font-size:.94rem}
 .group-image{width:clamp(120px,19vw,205px);height:80px;object-fit:contain;object-position:center right;flex:0 0 auto}
+.study-path{margin:4px 0 12px;padding:10px 13px;background:var(--blue-soft);border-radius:11px;font-size:.9rem;color:var(--ink)}
+.study-path b{color:#174fa9}
 .summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:14px 0}
 .summary div{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
 .summary b{display:block;font-size:.8rem;color:var(--sub);margin-bottom:2px}
@@ -112,6 +114,8 @@ h1{font-size:clamp(1.45rem,2.5vw,2.1rem);line-height:1.2;letter-spacing:-.025em;
   <img class="group-image" id="groupImage" src="https://tt-sensei.github.io/navi-character-/assets/web/groups/group-standing.webp" alt="" aria-hidden="true">
   <div class="score" aria-live="polite">★ <span id="score">0</span>点</div>
 </header>
+
+<p class="study-path"><b>自学自習のすすめ</b>　きまりを読む → 問題で確かめる → ヒント・解説で復習 → もう一度挑戦。まちがえても、理由が分かれば大丈夫。</p>
 
 <div class="summary" aria-label="この単元の4つのポイント">
   <div><b>角</b><span>対応する角は等しい</span></div>
