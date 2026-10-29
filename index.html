@@ -294,7 +294,7 @@ function renderProgress(){
     if(!status)return;
     var done=completedThisSession.has(id)||(learningProgress&&learningProgress.isCompleted(id));
     status.textContent=done?'✓ 練習済み':'';
-    var tab=$('.tab').filter(function(button){return button.dataset.mode===id;})[0];
+    var tab=$$('.tab').filter(function(button){return button.dataset.mode===id;})[0];
     if(tab)tab.setAttribute('aria-label',moduleLabels[id]+(done?'、練習済み':''));
   });
 }
@@ -396,7 +396,7 @@ $('#exploreReset').addEventListener('click',function(){
 $('#inspectPrev').addEventListener('click',function(){inspectIndex=Math.max(0,inspectIndex-1);showInspect();});
 $('#inspectNext').addEventListener('click',function(){
   if(inspectIndex<shapes.length-1){inspectIndex++;showInspect();}
-  else{$$('.tab').filter(function(button){return button.dataset.mode==='judge';})[0].click();renderJudge();}
+  else{$$$('.tab').filter(function(button){return button.dataset.mode==='judge';})[0].click();renderJudge();}
 });
 renderShapes();
 
@@ -445,7 +445,7 @@ $$('.choice').forEach(function(button){
 $('#judgeNext').addEventListener('click',function(){
   if(!judgeLocked)return;
   if(judgeIndex<judges.length-1){judgeIndex++;renderJudge();}
-  else{markModuleComplete('judge');$('.tab').filter(function(button){return button.dataset.mode==='draw';})[0].click();startDraw(0);}
+  else{markModuleComplete('judge');$$('.tab').filter(function(button){return button.dataset.mode==='draw';})[0].click();startDraw(0);}
 });
 $('#judgeRestart').addEventListener('click',function(){judgeIndex=0;renderJudge();});
 renderJudge();
