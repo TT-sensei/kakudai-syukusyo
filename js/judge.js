@@ -19,8 +19,8 @@ var judges = [
 ];
 judges=shuffle(judges.slice());
 var judgeIndex=0,judgeLocked=false;
-var overlaySvg=$('#overlaySvg'),overlayWorkbench=$('#overlayWorkbench'),overlayScaleInput=$('#overlayScale'),overlayRotateInput=$('#overlayRotate');
-var overlayScale=1,overlayRotate=0,overlayX=260,overlayY=120,showOverlayAngles=false,overlayDrag=null;
+var overlaySvg=$('#overlaySvg'),overlayScaleInput=$('#overlayScale'),overlayRotateInput=$('#overlayRotate');
+var overlayScale=1,overlayRotate=0,overlayX=100,overlayY=120,showOverlayAngles=false,overlayDrag=null;
 
 function parseShape(markup){
   var rect=markup.match(/<rect\b[^>]*>/i);
@@ -95,7 +95,7 @@ function renderOverlay(){
     : 'オレンジの図形を動かして、青い図形と比べてみよう。大きさと向きも調整できるよ。';
 }
 function resetOverlay(){
-  overlayScale=1;overlayRotate=0;overlayX=260;overlayY=120;showOverlayAngles=false;overlayDrag=null;
+  overlayScale=1;overlayRotate=0;overlayX=100;overlayY=120;showOverlayAngles=false;overlayDrag=null;
   overlayScaleInput.value='100';overlayRotateInput.value='0';
   $('#overlayAngleToggle').setAttribute('aria-pressed','false');
   $('#overlayAngleToggle').textContent='角の大きさを表示';
@@ -110,27 +110,15 @@ function svgCoordinates(event){
 function clamp(value,min,max){return Math.max(min,Math.min(max,value));}
 function renderJudge(){
   resetOverlay();
-  overlayWorkbench.hidden=true;
-  $('#overlayToggle').textContent='重ねて確かめる';
-  $('#overlayToggle').setAttribute('aria-expanded','false');
   var q=judges[judgeIndex];
   $('#judgeQ').textContent='この2つの'+q.name+'は、拡大図・縮図の関係？';
   $('#judgeNumber').textContent='第'+(judgeIndex+1)+'問 / '+judges.length;
   $('#judgeBar').style.width=(judgeIndex/judges.length*100)+'%';
-  $('#judgeVisual').innerHTML='<g fill="rgba(35,101,204,.13)" stroke="#2365cc" stroke-width="2.2" stroke-linejoin="round">'+q.a+'</g><g fill="rgba(184,90,19,.13)" stroke="#b85a13" stroke-width="2.2" stroke-linejoin="round">'+q.b+'</g>';
-  $('#judgeVisual').setAttribute('aria-label','左の図形と右の図形を比べる問題');
   $$('.choice').forEach(function(button){button.disabled=false;button.classList.remove('correct','incorrect');});
   $('#judgeNext').disabled=true;$('#judgeNext').textContent='次の問題';
   setGuide($('#judgeMsg'),'考えてみよう','角の大きさと、対応する辺の長さの割合を確かめよう。','hint');
   judgeLocked=false;
 }
-$('#overlayToggle').addEventListener('click',function(){
-  var opening=overlayWorkbench.hidden;
-  overlayWorkbench.hidden=!opening;
-  $('#overlayToggle').setAttribute('aria-expanded',String(opening));
-  $('#overlayToggle').textContent=opening?'図形を並べて見る':'重ねて確かめる';
-  if(opening)renderOverlay();
-});
 overlayScaleInput.addEventListener('input',function(){overlayScale=Number(this.value)/100;renderOverlay();});
 overlayRotateInput.addEventListener('input',function(){overlayRotate=Number(this.value);renderOverlay();});
 $('#overlayCenter').addEventListener('click',function(){overlayX=100;overlayY=120;renderOverlay();});

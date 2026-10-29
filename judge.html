@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#f4f7fb">
 <meta name="description" content="小学6年算数「拡大図と縮図」を学ぶ無料の学習アプリです。">
 <title>見分ける｜拡大図と縮図ラボ</title>
-<link rel="stylesheet" href="styles.css?v=20261029-overlayfix">
+<link rel="stylesheet" href="styles.css?v=20261029-overlayfirst">
 </head>
 <body class="is-learning">
 <main class="app">
@@ -25,15 +25,10 @@
     <div class="card">
       <div class="question-title"><div><p class="section-label">CHECK</p><h2 id="judgeQ">この2つの図形は、拡大図・縮図の関係？</h2></div><span class="question-number" id="judgeNumber">第1問</span></div>
       <div class="progress-track"><div class="progress-fill" id="judgeBar"></div></div>
-      <svg id="judgeVisual" class="judge-visual" viewBox="0 0 270 125" role="img" aria-label="大きさの異なる2つの図形"></svg>
-      <div class="overlay-tools">
-        <button class="btn secondary" id="overlayToggle" type="button" aria-expanded="false" aria-controls="overlayWorkbench">重ねて確かめる</button>
-        <span class="mini">図形を重ねて、角の大きさや形を比べよう。</span>
-      </div>
-      <section class="overlay-workbench" id="overlayWorkbench" hidden aria-label="図形を重ねて確かめる">
+      <section class="overlay-workbench" id="overlayWorkbench" aria-label="図形を重ねて確かめる">
         <p class="section-label">OVERLAY LAB</p>
-        <h3>青い図形とオレンジの図形を重ねよう</h3>
-        <p class="overlay-hint">オレンジの図形を指やマウスで動かして青い図形に重ねよう。大きさや向きも変えられるよ。</p>
+        <h3>重ねて比べよう</h3>
+        <p class="overlay-hint">2つの図形は最初から重なっているよ。オレンジの図形を動かしたり、大きさや向きを変えたりして、形を比べよう。</p>
         <svg id="overlaySvg" class="overlay-visual" viewBox="0 0 360 240" role="img" aria-label="青い図形とオレンジの図形を重ねて比べる操作エリア"></svg>
         <div class="overlay-controls">
           <div class="range-control">
@@ -82,6 +77,6 @@
 <footer class="footer">TT-sensei 学習アプリ試作版 ｜ 問題と図形はこのページ内で処理します。キャラクター画像が表示されなくても学習できます。</footer>
 </main>
 <script src="js/common.js"></script>
-<script src="js/judge.js?v=20261029-overlayfix"></script>
+<script src="js/judge.js?v=20261029-overlayfirst"></script>
 </body>
 </html>
