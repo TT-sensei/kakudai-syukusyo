@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f4f7fb">
+<meta name="description" content="小学6年算数「拡大図と縮図」を学ぶ無料の学習アプリです。">
+<title>見分ける｜拡大図と縮図ラボ</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="is-learning">
+<main class="app">
+<header>
+  <div class="brand">
+    <p class="eyebrow">算数 6年</p>
+    <h1>拡大図と縮図ラボ</h1>
+    <p class="subtitle">図形のきまりを見つけ、かいて、実際の長さに生かそう。</p>
+  </div>
+  <img class="group-image" id="groupImage" src="https://tt-sensei.github.io/navi-character-/assets/web/groups/group-standing.webp" alt="" aria-hidden="true">
+  <div class="score" aria-live="polite">★ <span id="score">0</span>点</div>
+</header>
+<section id="judge" class="panel active">
+  <div class="panel-toolbar"><a class="btn secondary home-back" href="index.html">← ミッション一覧</a><span class="panel-step">MISSION 02 / 04</span></div>
+  <div class="layout">
+    <div class="card">
+      <div class="question-title"><div><p class="section-label">CHECK</p><h2 id="judgeQ">この2つの図形は、拡大図・縮図の関係？</h2></div><span class="question-number" id="judgeNumber">第1問</span></div>
+      <div class="progress-track"><div class="progress-fill" id="judgeBar"></div></div>
+      <svg id="judgeVisual" class="judge-visual" viewBox="0 0 270 125" role="img" aria-label="大きさの異なる2つの図形"></svg>
+      <div class="choice-grid">
+        <button class="choice" data-answer="yes">〇　なっている</button>
+        <button class="choice" data-answer="no">×　なっていない</button>
+      </div>
+      <div class="message" id="judgeMsg" aria-live="polite">
+        <img class="navi-face" alt="" aria-hidden="true">
+        <p class="navi-text"><strong>考えてみよう</strong>角が同じか、辺の長さの割合が同じかを確かめよう。</p>
+      </div>
+      <div class="actions"><button class="btn" id="judgeNext" disabled>次の問題</button><button class="btn secondary" id="judgeRestart">最初から</button></div>
+    </div>
+    <aside class="card">
+      <p class="section-label">TWO RULES</p>
+      <h2>2つのきまりを使って判断</h2>
+      <p class="lead">1つの辺だけが同じ割合でも、それだけでは十分ではないよ。</p>
+      <div class="formula"><b>辺の長さの比</b><div class="equation">AB：A′B′ = BC：B′C′</div><p class="mini">どの対応する辺も、同じ倍率になる。</p></div>
+      <div class="formula"><b>角の大きさ</b><div class="equation">∠A = ∠A′</div><p class="mini">対応する角は、それぞれ等しい。</p></div>
+      <div class="note">答えたあとに理由を読んで、どうしてそうなるのか確かめよう。</div>
+    </aside>
+  </div>
+</section>
+<footer class="footer">TT-sensei 学習アプリ試作版 ｜ 問題と図形はこのページ内で処理します。キャラクター画像が表示されなくても学習できます。</footer>
+</main>
+<script src="js/common.js"></script>
+<script src="js/judge.js"></script>
+</body>
+</html>

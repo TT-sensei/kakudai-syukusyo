@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f4f7fb">
+<meta name="description" content="小学6年算数「拡大図と縮図」を学ぶ無料の学習アプリです。">
+<title>縮尺ミッション｜拡大図と縮図ラボ</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="is-learning">
+<main class="app">
+<header>
+  <div class="brand">
+    <p class="eyebrow">算数 6年</p>
+    <h1>拡大図と縮図ラボ</h1>
+    <p class="subtitle">図形のきまりを見つけ、かいて、実際の長さに生かそう。</p>
+  </div>
+  <img class="group-image" id="groupImage" src="https://tt-sensei.github.io/navi-character-/assets/web/groups/group-standing.webp" alt="" aria-hidden="true">
+  <div class="score" aria-live="polite">★ <span id="score">0</span>点</div>
+</header>
+<section id="scale" class="panel active">
+  <div class="panel-toolbar"><a class="btn secondary home-back" href="index.html">← ミッション一覧</a><span class="panel-step">MISSION 04 / 04</span></div>
+  <div class="layout">
+    <div class="card">
+      <p class="section-label">APPLICATION MISSION</p>
+      <div class="question-title"><h2 id="scaleQ">縮尺ミッション</h2><span class="question-number" id="scaleNumber">第1問</span></div>
+      <div class="progress-track"><div class="progress-fill" id="scaleBar"></div></div>
+      <div id="scaleScene" class="scale-scene" aria-live="polite"><div class="scene-art" aria-hidden="true"></div><div class="scene-copy"><span class="scene-kicker">活用ミッション</span><p>地図や設計図を使って、実際の長さを考えよう。</p></div></div>
+      <p class="lead" id="scaleLead">この場面で、縮尺を使って考えよう。</p>
+      <div class="scale-options" id="scaleOptions"></div>
+      <div class="message" id="scaleMsg" aria-live="polite"><img class="navi-face" alt="" aria-hidden="true"><p class="navi-text"><strong>考えるヒント</strong>まず単位をそろえよう。1mは100cmだよ。</p></div>
+      <div class="actions"><button class="btn" id="scaleNext" disabled>次の問題</button><button class="btn secondary" id="scaleRestart">最初から</button></div>
+    </div>
+    <aside class="card">
+      <p class="section-label">SCALE GUIDE</p>
+      <h2>縮尺を使うコツ</h2>
+      <p class="lead">縮尺 1：25,000 なら、図の1cmが実際の25,000cmを表すよ。</p>
+      <div class="formula"><b>地図上の長さから求める</b><div class="equation">実際の長さ ＝ 図の長さ × 縮尺の分母</div><p class="mini">まずcmで求めてから、mやkmに直そう。</p></div>
+      <div class="formula"><b>実際の長さから求める</b><div class="equation">図の長さ ＝ 実際の長さ ÷ 縮尺の分母</div><p class="mini">実際の長さをcmにそろえて計算しよう。</p></div>
+      <div class="note">場面をよく見て、「図の長さを実際に直す」「実際の長さを図に表す」「縮尺そのものを求める」のどれかを考えよう。</div>
+    </aside>
+  </div>
+</section>
+<footer class="footer">TT-sensei 学習アプリ試作版 ｜ 問題と図形はこのページ内で処理します。キャラクター画像が表示されなくても学習できます。</footer>
+</main>
+<script src="js/common.js"></script>
+<script src="js/scale.js"></script>
+</body>
+</html>

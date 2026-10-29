@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f4f7fb">
+<meta name="description" content="小学6年算数「拡大図と縮図」を学ぶ無料の学習アプリです。">
+<title>形のきまり｜拡大図と縮図ラボ</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="is-learning">
+<main class="app">
+<header>
+  <div class="brand">
+    <p class="eyebrow">算数 6年</p>
+    <h1>拡大図と縮図ラボ</h1>
+    <p class="subtitle">図形のきまりを見つけ、かいて、実際の長さに生かそう。</p>
+  </div>
+  <img class="group-image" id="groupImage" src="https://tt-sensei.github.io/navi-character-/assets/web/groups/group-standing.webp" alt="" aria-hidden="true">
+  <div class="score" aria-live="polite">★ <span id="score">0</span>点</div>
+</header>
+<section id="explore" class="panel active">
+  <div class="panel-toolbar"><a class="btn secondary home-back" href="index.html">← ミッション一覧</a><span class="panel-step">MISSION 01 / 04</span></div>
+  <div class="layout">
+    <div>
+      <section class="card goal">
+        <p class="section-label">LOOK & THINK</p>
+        <h2>同じ名前なら、いつでも同じ形？</h2>
+        <p class="lead">同じ名前の図形を2つ選んだとき、必ず拡大図・縮図の関係になるものを、すべて選ぼう。</p>
+        <div class="rule-grid">
+          <div class="rule"><strong>対応する角</strong><p>それぞれの角の大きさが等しい。</p></div>
+          <div class="rule"><strong>対応する辺</strong><p>どの辺も、長さの比が同じ。</p></div>
+        </div>
+      </section>
+      <div class="shape-grid" id="shapeGrid"></div>
+      <div class="actions">
+        <button class="btn" id="exploreCheck">答え合わせ</button>
+        <button class="btn secondary" id="exploreReset">選び直す</button>
+      </div>
+      <div class="message" id="exploreMsg" aria-live="polite">
+        <img class="navi-face" alt="" aria-hidden="true">
+        <p class="navi-text"><strong>見つけるポイント</strong>辺の長さだけでなく、角の大きさにも注目しよう。</p>
+      </div>
+      <section class="card" id="inspectCard" hidden>
+        <h2 id="inspectTitle">図形を調べる</h2>
+        <div class="inspect"><div id="inspectVisual"></div><div class="explanation" id="inspectText"></div></div>
+        <div class="actions"><button class="btn secondary" id="inspectPrev">← 前の図形</button><button class="btn" id="inspectNext">次の図形 →</button></div>
+      </section>
+    </div>
+    <aside>
+      <section class="card">
+        <p class="section-label">CHECK POINT</p>
+        <h2>「同じ名前」だけでは決まらない</h2>
+        <p class="lead">たとえば長方形は、角が全部90°でも、たてと横の割合がちがえば拡大図・縮図ではないよ。</p>
+        <svg viewBox="0 0 300 130" style="display:block;width:100%;max-height:150px;margin-top:10px" role="img" aria-label="たてと横の割合が異なる2つの長方形">
+          <rect x="18" y="31" width="74" height="37" rx="1" fill="#eaf2ff" stroke="#2365cc" stroke-width="2"/>
+          <rect x="134" y="20" width="132" height="78" rx="1" fill="#fff2e5" stroke="#b85a13" stroke-width="2"/>
+          <text x="55" y="88" font-size="12" text-anchor="middle" fill="#1c2d42">2：1</text>
+          <text x="200" y="116" font-size="12" text-anchor="middle" fill="#1c2d42">約1.7：1</text>
+        </svg>
+        <div class="note">正三角形・正方形・正多角形・円は、同じ種類どうしならいつでも拡大図・縮図の関係になるよ。</div>
+      </section>
+      <section class="card">
+        <h2>使う言葉</h2>
+        <p class="lead"><b>対応する辺：</b>もとの図形と、拡大・縮小した図形でペアになる辺。</p>
+        <p class="lead" style="margin-top:8px"><b>倍率：</b>もとの長さを何倍にしたか。2倍なら拡大、1/2倍なら縮小だよ。</p>
+      </section>
+    </aside>
+  </div>
+</section>
+<footer class="footer">TT-sensei 学習アプリ試作版 ｜ 問題と図形はこのページ内で処理します。キャラクター画像が表示されなくても学習できます。</footer>
+</main>
+<script src="js/common.js"></script>
+<script src="js/explore.js"></script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f4f7fb">
+<meta name="description" content="小学6年算数「拡大図と縮図」を学ぶ無料の学習アプリです。">
+<title>作図ラボ｜拡大図と縮図ラボ</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="is-learning">
+<main class="app">
+<header>
+  <div class="brand">
+    <p class="eyebrow">算数 6年</p>
+    <h1>拡大図と縮図ラボ</h1>
+    <p class="subtitle">図形のきまりを見つけ、かいて、実際の長さに生かそう。</p>
+  </div>
+  <img class="group-image" id="groupImage" src="https://tt-sensei.github.io/navi-character-/assets/web/groups/group-standing.webp" alt="" aria-hidden="true">
+  <div class="score" aria-live="polite">★ <span id="score">0</span>点</div>
+</header>
+<section id="draw" class="panel active">
+  <div class="panel-toolbar"><a class="btn secondary home-back" href="index.html">← ミッション一覧</a><span class="panel-step">MISSION 03 / 04</span></div>
+  <div class="card goal" style="margin-bottom:12px">
+    <p class="section-label">DRAW</p>
+    <h2>三角形や四角形を、拡大・縮小してかこう</h2>
+    <p class="lead">図形と倍率がランダムに出るよ。Aを中心に、ほかの頂点を方眼の交点に置こう。</p>
+  </div>
+  <div class="stage">
+    <div>
+      <svg id="board" class="board" viewBox="-0.5 -0.5 18 10" role="img" aria-label="三角形や四角形を拡大・縮小する作図用の方眼"></svg>
+      <p class="mini">Aを中心に考えよう。点のボタンで置きたい頂点を選び、方眼の交点をタップ。置き直しもできるよ。</p>
+    </div>
+    <section class="card">
+      <div class="question-title"><div><p class="section-label">DRAWING TASK</p><h2 id="drawQ">第1問</h2></div><span class="question-number" id="drawNumber">1 / 8</span></div>
+      <div class="progress-track"><div class="progress-fill" id="drawBar"></div></div>
+      <p class="lead" id="drawHelp"></p>
+      <div class="formula draw-formula" id="drawFormula"><b>中心からの位置を同じ倍率にする</b><p class="mini">Aから各頂点までの横・たての距離に、倍率をかけよう。</p></div>
+      <div class="chips" id="chips"></div>
+      <div class="message" id="drawMsg" aria-live="polite"><img class="navi-face" alt="" aria-hidden="true"><p class="navi-text"><strong>作図のポイント</strong>中心から、たて・横の方眼を数えよう。</p></div>
+      <div class="actions"><button class="btn" id="drawCheck">チェック</button><button class="btn secondary" id="drawHint">ヒント① 方向</button><button class="btn secondary" id="drawReset">やり直す</button><button class="btn secondary" id="drawAnotherSet">別の作図セット</button><button class="btn" id="drawNext" hidden>次の問題</button></div>
+    </section>
+  </div>
+  <div class="card" style="margin-top:12px">
+    <h2>作図でわすれないこと</h2>
+    <div class="rule-grid">
+      <div class="rule"><strong>① 中心からの方向</strong><p>中心と頂点を結ぶ直線上に、対応する頂点がくる。</p></div>
+      <div class="rule"><strong>② 中心からの距離</strong><p>2倍なら距離も2倍、1/2倍なら距離も1/2にする。</p></div>
+      <div class="rule"><strong>③ 辺と角を使う方法</strong><p>対応する辺を同じ倍率にし、対応する角はもとの図形と同じ大きさにする。方眼がなくても、辺と角の関係を使って作図できる。</p></div>
+      <div class="rule"><strong>④ 三角形から四角形へ</strong><p>三角形で身につけた作図の考え方を、四角形にも生かして考えよう。</p></div>
+    </div>
+  </div>
+</section>
+<footer class="footer">TT-sensei 学習アプリ試作版 ｜ 問題と図形はこのページ内で処理します。キャラクター画像が表示されなくても学習できます。</footer>
+</main>
+<script src="js/common.js"></script>
+<script src="js/draw.js"></script>
+</body>
+</html>
