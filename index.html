@@ -78,6 +78,8 @@ h1{font-size:clamp(1.45rem,2.5vw,2.1rem);line-height:1.2;letter-spacing:-.025em;
 .choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
 .choice{min-height:50px;background:var(--paper);border:2px solid var(--line);border-radius:11px;color:var(--ink);font-weight:800;cursor:pointer;padding:9px}
 .choice:hover:not(:disabled){border-color:var(--blue)}
+.choice.correct{border-color:var(--green);background:var(--green-soft)}
+.choice.incorrect{border-color:var(--red);background:var(--red-soft)}
 .choice:disabled{cursor:default;opacity:.85}
 .progress-track{height:8px;background:#e5ebf2;border-radius:99px;overflow:hidden;margin:0 0 12px}
 .progress-fill{width:0;height:100%;background:var(--teal);transition:width .2s ease}
@@ -217,7 +219,7 @@ h1{font-size:clamp(1.45rem,2.5vw,2.1rem);line-height:1.2;letter-spacing:-.025em;
   </div>
   <div class="stage">
     <div>
-      <svg id="board" class="board" viewBox="-0.5 -0.5 14 10" role="img" aria-label="三角形や四角形を拡大・縮小する作図用の方眼"></svg>
+      <svg id="board" class="board" viewBox="-0.5 -0.5 18 10" role="img" aria-label="三角形や四角形を拡大・縮小する作図用の方眼"></svg>
       <p class="mini">Aを中心に考えよう。点のボタンで置きたい頂点を選び、方眼の交点をタップ。置き直しもできるよ。</p>
     </div>
     <section class="card">
@@ -283,7 +285,13 @@ var score = Number(readStored(scoreStoreKey,0))||0;
 var earnedAwards = new Set(readStored(awardsStoreKey,[]));
 $('#score').textContent=String(score);
 function addScore(points){score += points;$('#score').textContent=String(score);writeStored(scoreStoreKey,score);}
-function awardOnce(key,points){if(earnedAwards.has(key))return false;earnedAwards.add(key);writeStored(awardsStoreKey,Array.from(earnedAwards));addScore(points);return true;}
+function awardOnce(key,points,legacyKey){
+  if(earnedAwards.has(key)||(legacyKey&&earnedAwards.has(legacyKey))){
+    if(!earnedAwards.has(key)){earnedAwards.add(key);writeStored(awardsStoreKey,Array.from(earnedAwards));}
+    return false;
+  }
+  earnedAwards.add(key);writeStored(awardsStoreKey,Array.from(earnedAwards));addScore(points);return true;
+}
 var learningProgress = null;
 var completedThisSession = new Set();
 var moduleIds = ['explore','judge','draw','scale'];
@@ -409,13 +417,14 @@ function polygon(cx,cy,r,sides,rotation){
   return '<polygon points="'+points.join(' ')+'"/>';
 }
 var judges = [
- {name:'正方形',yes:true,a:'<rect x="30" y="40" width="45" height="45"/>',b:'<rect x="145" y="20" width="90" height="90"/>',note:'どちらも正方形。対応する角は全部90°で、対応する辺の長さはすべて2倍です。'},
- {name:'長方形',yes:false,a:'<rect x="20" y="38" width="80" height="40"/>',b:'<rect x="135" y="23" width="120" height="80"/>',note:'たては2倍ですが、横は1.5倍です。辺の長さの割合がそろわないので、拡大図・縮図ではありません。'},
- {name:'三角形',yes:true,a:'<polygon points="20,90 55,30 95,90"/>',b:'<polygon points="130,105 182.5,15 242.5,105"/>',note:'対応する辺の長さはすべて1.5倍で、対応する角も等しくなっています。'},
- {name:'ひし形',yes:false,a:'<polygon points="20,60 60,20 100,60 60,100"/>',b:'<polygon points="130,60 190,30 250,60 190,90"/>',note:'4辺が等しくても、角の大きさがちがいます。対応する角がそろわないため、拡大図・縮図ではありません。'},
- {name:'正五角形',yes:true,a:polygon(55,62,29,5,-Math.PI/2),b:polygon(190,62,58,5,-Math.PI/2),note:'どちらも正五角形です。対応する角は等しく、対応する辺の長さはすべて2倍です。'},
- {name:'三角形',yes:false,a:'<polygon points="20,90 55,30 95,90"/>',b:'<polygon points="140,90 190,30 250,90"/>',note:'たての長さは同じですが、底辺の割合がちがいます。辺を同じ割合にしていないため、拡大図・縮図ではありません。'}
+ {id:'square-same',legacyIndex:0,name:'正方形',yes:true,a:'<rect x="30" y="40" width="45" height="45"/>',b:'<rect x="145" y="20" width="90" height="90"/>',note:'どちらも正方形。対応する角は全部90°で、対応する辺の長さはすべて2倍です。'},
+ {id:'rectangle-ratio',legacyIndex:1,name:'長方形',yes:false,a:'<rect x="20" y="38" width="80" height="40"/>',b:'<rect x="135" y="23" width="120" height="80"/>',note:'たては2倍ですが、横は1.5倍です。辺の長さの割合がそろわないので、拡大図・縮図ではありません。'},
+ {id:'triangle-same',legacyIndex:2,name:'三角形',yes:true,a:'<polygon points="20,90 55,30 95,90"/>',b:'<polygon points="130,105 182.5,15 242.5,105"/>',note:'対応する辺の長さはすべて1.5倍で、対応する角も等しくなっています。'},
+ {id:'rhombus-angle',legacyIndex:3,name:'ひし形',yes:false,a:'<polygon points="20,60 60,20 100,60 60,100"/>',b:'<polygon points="130,60 190,30 250,60 190,90"/>',note:'4辺が等しくても、角の大きさがちがいます。対応する角がそろわないため、拡大図・縮図ではありません。'},
+ {id:'pentagon-same',legacyIndex:4,name:'正五角形',yes:true,a:polygon(55,62,29,5,-Math.PI/2),b:polygon(190,62,58,5,-Math.PI/2),note:'どちらも正五角形です。対応する角は等しく、対応する辺の長さはすべて2倍です。'},
+ {id:'triangle-ratio',legacyIndex:5,name:'三角形',yes:false,a:'<polygon points="20,90 55,30 95,90"/>',b:'<polygon points="140,90 190,30 250,90"/>',note:'たての長さは同じですが、底辺の割合がちがいます。辺を同じ割合にしていないため、拡大図・縮図ではありません。'}
 ];
+judges=shuffle(judges.slice());
 var judgeIndex=0,judgeLocked=false;
 function renderJudge(){
   var q=judges[judgeIndex];
@@ -424,7 +433,7 @@ function renderJudge(){
   $('#judgeBar').style.width=(judgeIndex/judges.length*100)+'%';
   $('#judgeVisual').innerHTML='<g fill="rgba(35,101,204,.13)" stroke="#2365cc" stroke-width="2.2" stroke-linejoin="round">'+q.a+'</g><g fill="rgba(184,90,19,.13)" stroke="#b85a13" stroke-width="2.2" stroke-linejoin="round">'+q.b+'</g>';
   $('#judgeVisual').setAttribute('aria-label','左の図形と右の図形を比べる問題');
-  $$('.choice').forEach(function(button){button.disabled=false;});
+  $('.choice').forEach(function(button){button.disabled=false;button.classList.remove('correct','incorrect');});
   $('#judgeNext').disabled=true;$('#judgeNext').textContent='次の問題';
   setGuide($('#judgeMsg'),'考えてみよう','角の大きさと、対応する辺の長さの割合を確かめよう。','hint');
   judgeLocked=false;
@@ -434,9 +443,13 @@ $$('.choice').forEach(function(button){
     if(judgeLocked)return;
     judgeLocked=true;
     var q=judges[judgeIndex],answer=button.dataset.answer==='yes',good=answer===q.yes;
-    $$('.choice').forEach(function(choice){choice.disabled=true;});
-    if(good){awardOnce('judge-'+judgeIndex,10);setGuide($('#judgeMsg'),'正解！',q.note,'correct','good');}
-    else{setGuide($('#judgeMsg'),'おしい！',q.note,'retry','retry');}
+    $('.choice').forEach(function(choice){
+      choice.disabled=true;
+      if(choice.dataset.answer===(q.yes?'yes':'no'))choice.classList.add('correct');
+      else if(choice===button)choice.classList.add('incorrect');
+    });
+    if(good){awardOnce('judge-'+q.id,10,'judge-'+q.legacyIndex);setGuide($('#judgeMsg'),'正解！',q.note,'correct','good');}
+    else{setGuide($('#judgeMsg'),'おしい！','正解は'+(q.yes?'〇　なっている':'×　なっていない')+'。'+q.note,'retry','retry');}
     $('#judgeBar').style.width=((judgeIndex+1)/judges.length*100)+'%';
     $('#judgeNext').disabled=false;
     $('#judgeNext').textContent=judgeIndex===judges.length-1?'作図へ進む':'次の問題';
@@ -447,7 +460,7 @@ $('#judgeNext').addEventListener('click',function(){
   if(judgeIndex<judges.length-1){judgeIndex++;renderJudge();}
   else{markModuleComplete('judge');$$('.tab').filter(function(button){return button.dataset.mode==='draw';})[0].click();startDraw(0);}
 });
-$('#judgeRestart').addEventListener('click',function(){judgeIndex=0;renderJudge();});
+$('#judgeRestart').addEventListener('click',function(){judges=shuffle(judges.slice());judgeIndex=0;renderJudge();});
 renderJudge();
 
 var drawShapes=[
@@ -456,7 +469,7 @@ var drawShapes=[
   {id:'scalene-triangle',name:'三角形',vertices:['A','B','C'],points:{A:[0,0],B:[6,0],C:[2,4]}},
   {id:'trapezoid',name:'台形',vertices:['A','B','C','D'],points:{A:[0,0],B:[6,0],C:[4,2],D:[2,2]}},
   {id:'parallelogram',name:'平行四辺形',vertices:['A','B','C','D'],points:{A:[0,0],B:[4,0],C:[6,2],D:[2,2]}},
-  {id:'rhombus',name:'ひし形',vertices:['A','B','C','D'],points:{A:[0,0],B:[2,-2],C:[4,0],D:[2,2]}},
+  {id:'rhombus',name:'ひし形',vertices:['A','B','C','D'],points:{A:[0,0],B:[4,-2],C:[8,0],D:[4,2]}},
   {id:'rectangle',name:'長方形',vertices:['A','B','C','D'],points:{A:[0,0],B:[6,0],C:[6,2],D:[0,2]},rightAngleAtA:true},
   {id:'square',name:'正方形',vertices:['A','B','C','D'],points:{A:[0,0],B:[4,0],C:[4,4],D:[0,4]},rightAngleAtA:true}
 ];
@@ -482,7 +495,7 @@ function createDrawProblems(){
         bounds.maxY=Math.max(bounds.maxY,q[1]);
       });
     });
-    var minOriginX=Math.ceil(1-bounds.minX),maxOriginX=Math.floor(13-bounds.maxX);
+    var minOriginX=Math.ceil(1-bounds.minX),maxOriginX=Math.floor(17-bounds.maxX);
     var minOriginY=Math.ceil(1-bounds.minY),maxOriginY=Math.floor(9-bounds.maxY);
     if(minOriginX>maxOriginX||minOriginY>maxOriginY)throw new Error('方眼に収まらない図形があります: '+shape.name);
     return {shape:shape,k:k,origin:[randomInteger(minOriginX,maxOriginX),randomInteger(minOriginY,maxOriginY)]};
@@ -537,8 +550,8 @@ function renderDraw(){
 }
 function drawBoard(){
   var svg=$('#board'),markup='';
-  for(var x=0;x<=13;x++)markup+='<line x1="'+x+'" y1="0" x2="'+x+'" y2="9" stroke="#d5dfeb" stroke-width=".045"/>';
-  for(var y=0;y<=9;y++)markup+='<line x1="0" y1="'+y+'" x2="13" y2="'+y+'" stroke="#d5dfeb" stroke-width=".045"/>';
+  for(var x=0;x<=17;x++)markup+='<line x1="'+x+'" y1="0" x2="'+x+'" y2="9" stroke="#d5dfeb" stroke-width=".045"/>';
+  for(var y=0;y<=9;y++)markup+='<line x1="0" y1="'+y+'" x2="17" y2="'+y+'" stroke="#d5dfeb" stroke-width=".045"/>;'
   if(D.hintLevel>0){
     D.target.forEach(function(v){
       var a=D.abs[v],cx=D.centerPoint[0],cy=D.centerPoint[1];
@@ -639,12 +652,13 @@ startDraw(0);
 setGuide($('#drawMsg'),'作図のポイント','Aから各頂点までの向きと距離を見よう。','hint');
 
 var scaleQuestions=[
- {question:'縮尺 1：25,000 の地図で、道のりが4cmでした。実際の道のりは？',lead:'1cmが実際の25,000cmを表します。',options:['100m','1km','10km'],correct:1,note:'4 × 25,000 ＝ 100,000cm。100,000cm ＝ 1,000m ＝ 1kmです。'},
- {question:'縮尺 1：500 の縮図で、長さが3cmでした。実際の長さは？',lead:'まず実際の長さをcmで求めよう。',options:['1.5m','15m','150m'],correct:1,note:'3 × 500 ＝ 1,500cm。1,500cm ÷ 100 ＝ 15mです。'},
- {question:'実際の距離が600m、縮尺が1：20,000です。図の長さは？',lead:'実際の600mを、先にcmに直そう。',options:['2cm','3cm','12cm'],correct:1,note:'600m ＝ 60,000cm。60,000 ÷ 20,000 ＝ 3cmです。'},
- {question:'縮尺 1：1,000 の図で、長さが2.4cmでした。実際の長さは？',lead:'2.4 × 1,000 で、まずcmの答えを出そう。',options:['2.4m','24m','240m'],correct:1,note:'2.4 × 1,000 ＝ 2,400cm。2,400cm ÷ 100 ＝ 24mです。'},
- {question:'縮尺 1：500 の縮図で、2地点の間が8cmでした。実際の距離は？',lead:'図の長さに縮尺の分母をかけよう。',options:['4m','40m','400m'],correct:1,note:'8 × 500 ＝ 4,000cm。4,000cm ÷ 100 ＝ 40mです。'}
+ {id:'map-25000-4cm',legacyIndex:0,question:'縮尺 1：25,000 の地図で、道のりが4cmでした。実際の道のりは？',lead:'1cmが実際の25,000cmを表します。',options:['100m','1km','10km'],correct:1,note:'4 × 25,000 ＝ 100,000cm。100,000cm ＝ 1,000m ＝ 1kmです。'},
+ {id:'drawing-500-3cm',legacyIndex:1,question:'縮尺 1：500 の縮図で、長さが3cmでした。実際の長さは？',lead:'まず実際の長さをcmで求めよう。',options:['1.5m','15m','150m'],correct:1,note:'3 × 500 ＝ 1,500cm。1,500cm ÷ 100 ＝ 15mです。'},
+ {id:'actual-600m-20000',legacyIndex:2,question:'実際の距離が600m、縮尺が1：20,000です。図の長さは？',lead:'実際の600mを、先にcmに直そう。',options:['2cm','3cm','12cm'],correct:1,note:'600m ＝ 60,000cm。60,000 ÷ 20,000 ＝ 3cmです。'},
+ {id:'drawing-1000-2-4cm',legacyIndex:3,question:'縮尺 1：1,000 の図で、長さが2.4cmでした。実際の長さは？',lead:'2.4 × 1,000 で、まずcmの答えを出そう。',options:['2.4m','24m','240m'],correct:1,note:'2.4 × 1,000 ＝ 2,400cm。2,400cm ÷ 100 ＝ 24mです。'},
+ {id:'drawing-500-8cm',legacyIndex:4,question:'縮尺 1：500 の縮図で、2地点の間が8cmでした。実際の距離は？',lead:'図の長さに縮尺の分母をかけよう。',options:['4m','40m','400m'],correct:1,note:'8 × 500 ＝ 4,000cm。4,000cm ÷ 100 ＝ 40mです。'}
 ];
+scaleQuestions=shuffle(scaleQuestions.slice());
 var scaleIndex=0,scaleLocked=false;
 function renderScale(){
   var q=scaleQuestions[scaleIndex];
@@ -652,20 +666,22 @@ function renderScale(){
   $('#scaleLead').textContent=q.lead;
   $('#scaleNumber').textContent='第'+(scaleIndex+1)+'問 / '+scaleQuestions.length;
   $('#scaleBar').style.width=(scaleIndex/scaleQuestions.length*100)+'%';
-  $('#scaleOptions').innerHTML=q.options.map(function(option,index){
-    return '<button type="button" class="scale-option" data-option="'+index+'">'+option+'</button>';
+  var optionItems=q.options.map(function(option,index){return {label:option,correct:index===q.correct};});
+  shuffle(optionItems);
+  $('#scaleOptions').innerHTML=optionItems.map(function(option){
+    return '<button type="button" class="scale-option" data-correct="'+option.correct+'">'+option.label+'</button>';
   }).join('');
   $$('.scale-option').forEach(function(button){
     button.addEventListener('click',function(){
       if(scaleLocked)return;
       scaleLocked=true;
-      var answer=Number(button.dataset.option),good=answer===q.correct;
+      var good=button.dataset.correct==='true';
       $$('.scale-option').forEach(function(optionButton){
         optionButton.disabled=true;
-        if(Number(optionButton.dataset.option)===q.correct)optionButton.classList.add('correct');
-        else if(Number(optionButton.dataset.option)===answer)optionButton.classList.add('incorrect');
+        if(optionButton.dataset.correct==='true')optionButton.classList.add('correct');
+        else if(optionButton===button)optionButton.classList.add('incorrect');
       });
-      if(good){awardOnce('scale-'+scaleIndex,10);setGuide($('#scaleMsg'),'正解！',q.note,'correct','good');}
+      if(good){awardOnce('scale-'+q.id,10,'scale-'+q.legacyIndex);setGuide($('#scaleMsg'),'正解！',q.note,'correct','good');}
       else{setGuide($('#scaleMsg'),'いっしょに確かめよう',q.note,'retry','retry');}
       $('#scaleBar').style.width=((scaleIndex+1)/scaleQuestions.length*100)+'%';
       $('#scaleNext').disabled=false;
@@ -679,9 +695,9 @@ function renderScale(){
 $('#scaleNext').addEventListener('click',function(){
   if(!scaleLocked)return;
   if(scaleIndex<scaleQuestions.length-1){scaleIndex++;renderScale();}
-  else{markModuleComplete('scale');scaleIndex=0;renderScale();}
+  else{markModuleComplete('scale');scaleQuestions=shuffle(scaleQuestions.slice());scaleIndex=0;renderScale();}
 });
-$('#scaleRestart').addEventListener('click',function(){scaleIndex=0;renderScale();});
+$('#scaleRestart').addEventListener('click',function(){scaleQuestions=shuffle(scaleQuestions.slice());scaleIndex=0;renderScale();});
 renderScale();
 })();
 </script>
