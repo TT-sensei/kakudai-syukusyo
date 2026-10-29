@@ -279,6 +279,7 @@ function addScore(points){score += points; $('#score').textContent = String(scor
 var learningProgress = null;
 var completedThisSession = new Set();
 var moduleIds = ['explore','judge','draw','scale'];
+var moduleLabels = {explore:'形のきまり',judge:'見分ける',draw:'作図ラボ',scale:'縮尺を使う'};
 function renderProgress(){
   moduleIds.forEach(function(id){
     var status=$('#status-'+id);
@@ -286,7 +287,7 @@ function renderProgress(){
     var done=completedThisSession.has(id)||(learningProgress&&learningProgress.isCompleted(id));
     status.textContent=done?'✓ 練習済み':'';
     var tab=$('.tab').filter(function(button){return button.dataset.mode===id;})[0];
-    if(tab)tab.setAttribute('aria-label',tab.textContent.trim()+(done?'、練習済み':''));
+    if(tab)tab.setAttribute('aria-label',moduleLabels[id]+(done?'、練習済み':''));
   });
 }
 function markModuleComplete(id){
