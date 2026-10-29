@@ -23,7 +23,7 @@ jobs:
       - name: Install Playwright in temporary folder
         run: npm install --prefix "$RUNNER_TEMP/tt-playwright" playwright
       - name: Install Chromium
-        run: "$RUNNER_TEMP/tt-playwright/node_modules/.bin/playwright" install --with-deps chromium
+        run: '"$RUNNER_TEMP/tt-playwright/node_modules/.bin/playwright" install --with-deps chromium'
       - name: Test the published badge system in Chromium
         env:
           BASE_URL: https://tt-sensei.github.io/kakudai-syukusyo/
