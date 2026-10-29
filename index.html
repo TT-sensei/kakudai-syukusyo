@@ -212,19 +212,19 @@ h1{font-size:clamp(1.45rem,2.5vw,2.1rem);line-height:1.2;letter-spacing:-.025em;
 <section id="draw" class="panel">
   <div class="card goal" style="margin-bottom:12px">
     <p class="section-label">DRAW</p>
-    <h2>まずは直角三角形で、かいてみよう</h2>
-    <p class="lead">Aは直角の頂点で、中心になる点だよ。B′は横、C′はたてに動かすので、最初の作図でも迷いにくい形だよ。</p>
+    <h2>三角形や四角形を、拡大・縮小してかこう</h2>
+    <p class="lead">図形と倍率がランダムに出るよ。Aを中心に、ほかの頂点を方眼の交点に置こう。</p>
   </div>
   <div class="stage">
     <div>
-      <svg id="board" class="board" viewBox="-0.5 -0.5 13 9" role="img" aria-label="直角三角形を拡大・縮小する作図用の方眼"></svg>
-      <p class="mini">方眼の交点をタップして点を置こう。Aは直角の中心。B′は右、C′は下へ置くよ。点のボタンから置き直すこともできるよ。</p>
+      <svg id="board" class="board" viewBox="-0.5 -0.5 13 9" role="img" aria-label="三角形や四角形を拡大・縮小する作図用の方眼"></svg>
+      <p class="mini">Aを中心に考えよう。点のボタンで置きたい頂点を選び、方眼の交点をタップ。置き直しもできるよ。</p>
     </div>
     <section class="card">
       <div class="question-title"><div><p class="section-label">DRAWING TASK</p><h2 id="drawQ">第1問</h2></div><span class="question-number" id="drawNumber">1 / 5</span></div>
       <div class="progress-track"><div class="progress-fill" id="drawBar"></div></div>
       <p class="lead" id="drawHelp"></p>
-      <div class="formula draw-formula" id="drawFormula"><b>まずは元の辺の長さを確認</b><p class="mini">横のABは4マス、たてのACは2マス。倍率をかけると、B′・C′までの長さが決まるよ。</p></div>
+      <div class="formula draw-formula" id="drawFormula"><b>中心からの位置を同じ倍率にする</b><p class="mini">Aから各頂点までの横・たての距離に、倍率をかけよう。</p></div>
       <div class="chips" id="chips"></div>
       <div class="message" id="drawMsg" aria-live="polite"><img class="navi-face" alt="" aria-hidden="true"><p class="navi-text"><strong>作図のポイント</strong>中心から、たて・横の方眼を数えよう。</p></div>
       <div class="actions"><button class="btn" id="drawCheck">チェック</button><button class="btn secondary" id="drawHint">ヒント① 方向</button><button class="btn secondary" id="drawReset">やり直す</button><button class="btn" id="drawNext" hidden>次の問題</button></div>
@@ -450,35 +450,78 @@ $('#judgeNext').addEventListener('click',function(){
 $('#judgeRestart').addEventListener('click',function(){judgeIndex=0;renderJudge();});
 renderJudge();
 
-var REL={A:[0,0],B:[4,0],C:[0,2]};
-var V=['A','B','C'];
-var drawProblems=[['A',2,[3,3]],['A',0.5,[3,3]],['A',1.5,[3,3]],['A',0.5,[7,2]],['A',2,[3,1]]];
-var D=null,drawIndex=0;
+var drawShapes=[
+  {id:'right-triangle',name:'直角三角形',vertices:['A','B','C'],points:{A:[0,0],B:[4,0],C:[0,2]},rightAngleAtA:true},
+  {id:'isosceles-triangle',name:'二等辺三角形',vertices:['A','B','C'],points:{A:[0,0],B:[4,0],C:[2,4]}},
+  {id:'scalene-triangle',name:'三角形',vertices:['A','B','C'],points:{A:[0,0],B:[6,0],C:[2,4]}},
+  {id:'trapezoid',name:'台形',vertices:['A','B','C','D'],points:{A:[0,0],B:[6,0],C:[4,2],D:[2,2]}},
+  {id:'rectangle',name:'長方形',vertices:['A','B','C','D'],points:{A:[0,0],B:[6,0],C:[6,2],D:[0,2]},rightAngleAtA:true},
+  {id:'square',name:'正方形',vertices:['A','B','C','D'],points:{A:[0,0],B:[4,0],C:[4,4],D:[0,4]},rightAngleAtA:true},
+  {id:'parallelogram',name:'平行四辺形',vertices:['A','B','C','D'],points:{A:[0,0],B:[4,0],C:[6,2],D:[2,2]}}
+];
+var drawMultipliers=[0.5,1.5,2];
+function randomInteger(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+function shuffle(items){
+  for(var i=items.length-1;i>0;i--){
+    var j=Math.floor(Math.random()*(i+1)),temp=items[i];
+    items[i]=items[j];items[j]=temp;
+  }
+  return items;
+}
+function createDrawProblems(){
+  return shuffle(drawShapes.slice()).map(function(shape){
+    var k=drawMultipliers[Math.floor(Math.random()*drawMultipliers.length)];
+    var maxX=0,maxY=0;
+    shape.vertices.forEach(function(v){
+      var p=shape.points[v];
+      maxX=Math.max(maxX,p[0],p[0]*k);
+      maxY=Math.max(maxY,p[1],p[1]*k);
+    });
+    return {shape:shape,k:k,origin:[randomInteger(0,Math.floor(12-maxX)),randomInteger(0,Math.floor(8-maxY))]};
+  });
+}
+var drawProblems=createDrawProblems(),D=null,drawIndex=0;
 function multiplierText(k){return k===0.5?'1/2倍':k===1.5?'1.5倍':k+'倍';}
 function pointString(point){return point[0]+','+point[1];}
+function relativePositionText(dx,dy){
+  var parts=[];
+  if(dx>0)parts.push('右へ'+dx+'マス');
+  else if(dx<0)parts.push('左へ'+Math.abs(dx)+'マス');
+  if(dy>0)parts.push('下へ'+dy+'マス');
+  else if(dy<0)parts.push('上へ'+Math.abs(dy)+'マス');
+  return parts.join('、')||'Aと同じ位置';
+}
 function startDraw(index){
   drawIndex=index;
-  var problem=drawProblems[index],center=problem[0],k=problem[1],origin=problem[2],abs={},ans={};
-  V.forEach(function(v){abs[v]=[origin[0]+REL[v][0],origin[1]+REL[v][1]];});
-  var centerPoint=abs[center];
-  V.forEach(function(v){ans[v]=[centerPoint[0]+k*(abs[v][0]-centerPoint[0]),centerPoint[1]+k*(abs[v][1]-centerPoint[1])];});
-  D={center:center,k:k,abs:abs,ans:ans,centerPoint:centerPoint,target:V.filter(function(v){return v!==center;}),placed:{},active:V.filter(function(v){return v!==center;})[0],hintLevel:0,done:false};
+  var problem=drawProblems[index],shape=problem.shape,k=problem.k,origin=problem.origin,abs={},ans={};
+  shape.vertices.forEach(function(v){
+    var p=shape.points[v];
+    abs[v]=[origin[0]+p[0],origin[1]+p[1]];
+  });
+  var centerPoint=abs.A;
+  shape.vertices.forEach(function(v){
+    ans[v]=[centerPoint[0]+k*(abs[v][0]-centerPoint[0]),centerPoint[1]+k*(abs[v][1]-centerPoint[1])];
+  });
+  D={shape:shape,vertices:shape.vertices,center:'A',k:k,abs:abs,ans:ans,centerPoint:centerPoint,target:shape.vertices.filter(function(v){return v!=='A';}),placed:{},active:shape.vertices.filter(function(v){return v!=='A';})[0],hintLevel:0,done:false};
   renderDraw();
 }
 function renderDraw(){
   var targets=D.target;
-  $('#drawQ').textContent='第'+(drawIndex+1)+'問　'+D.center+'を中心に'+multiplierText(D.k)+'の'+(D.k>1?'拡大図':'縮図');
+  $('#drawQ').textContent='第'+(drawIndex+1)+'問　'+D.shape.name+'をAを中心に'+multiplierText(D.k)+(D.k>1?'拡大':'縮小')+'しよう';
   $('#drawNumber').textContent=(drawIndex+1)+' / '+drawProblems.length;
   $('#drawBar').style.width=((drawIndex+(D.done?1:0))/drawProblems.length*100)+'%';
-  $('#drawHelp').textContent='Aを中心に'+multiplierText(D.k)+'。Aは動かさず、B′は右へ、C′は下へ置く。';
-  $('#drawFormula').innerHTML='<b>辺の長さに倍率をかける</b><p class="mini">ABは横に4マス、ACはたてに2マス。B′とC′は、別々に倍率をかけて位置を決めよう。</p>';
+  $('#drawHelp').textContent='Aを中心に'+multiplierText(D.k)+'。Aから見た各頂点の向きと距離を、同じ倍率にしよう。';
+  $('#drawFormula').innerHTML='<b>中心からの位置を同じ倍率にする</b>'+targets.map(function(v){
+    var p=D.shape.points[v],x=p[0]*D.k,y=p[1]*D.k;
+    return '<p class="mini"><b>A→'+v+'：</b>'+relativePositionText(p[0],p[1])+' → <b>A→'+v+'′：</b>'+relativePositionText(x,y)+'</p>';
+  }).join('');
   $('#chips').innerHTML=targets.map(function(v){
     var isPlaced=!!D.placed[v];
     return '<button type="button" class="chip'+(D.active===v?' active':'')+(isPlaced?' done':'')+'" data-v="'+v+'" aria-pressed="'+(D.active===v)+'">'+v+'′ '+(isPlaced?'●':'を置く')+'</button>';
   }).join('');
   $$('.chip').forEach(function(button){button.addEventListener('click',function(){D.active=button.dataset.v;renderDraw();});});
   $('#drawNext').hidden=!D.done;
-  $('#drawNext').textContent=drawIndex===drawProblems.length-1?'作図ラボを終了':'次の問題';
+  $('#drawNext').textContent=drawIndex===drawProblems.length-1?'新しいランダム問題へ':'次の問題';
   $('#drawCheck').disabled=D.done;
   $('#drawHint').textContent=D.hintLevel===0?'ヒント① 方向':D.hintLevel===1?'ヒント② 距離':'ヒントを確認済み';
   $('#drawHint').disabled=D.hintLevel>=2||D.done;
@@ -495,18 +538,22 @@ function drawBoard(){
       markup+='<line x1="'+cx+'" y1="'+cy+'" x2="'+(cx+(a[0]-cx)*factor)+'" y2="'+(cy+(a[1]-cy)*factor)+'" stroke="#b85a13" stroke-width=".09" stroke-dasharray=".22 .18"/>';
     });
   }
-  markup+='<polygon points="'+V.map(function(v){return pointString(D.abs[v]);}).join(' ')+'" fill="rgba(35,101,204,.12)" stroke="#2365cc" stroke-width=".12"/>';
+  markup+='<polygon points="'+D.vertices.map(function(v){return pointString(D.abs[v]);}).join(' ')+'" fill="rgba(35,101,204,.12)" stroke="#2365cc" stroke-width=".12"/>';
   var a=D.centerPoint;
-  markup+='<path d="M '+(a[0]+.38)+' '+a[1]+' L '+(a[0]+.38)+' '+(a[1]+.38)+' L '+a[0]+' '+(a[1]+.38)+'" fill="none" stroke="#2365cc" stroke-width=".1"/>';
-  V.forEach(function(v){
+  if(D.shape.rightAngleAtA){
+    markup+='<path d="M '+(a[0]+.38)+' '+a[1]+' L '+(a[0]+.38)+' '+(a[1]+.38)+' L '+a[0]+' '+(a[1]+.38)+'" fill="none" stroke="#2365cc" stroke-width=".1"/>';
+  }
+  D.vertices.forEach(function(v){
     markup+='<text x="'+D.abs[v][0]+'" y="'+(D.abs[v][1]-.42)+'" text-anchor="middle" font-size=".66" font-weight="bold" fill="#174fa9">'+v+'</text>';
   });
   var points={};
-  V.forEach(function(v){points[v]=v===D.center?D.centerPoint:D.placed[v];});
-  if(V.every(function(v){return !!points[v];})){
-    markup+='<polygon points="'+V.map(function(v){return pointString(points[v]);}).join(' ')+'" fill="rgba(184,90,19,.16)" stroke="#b85a13" stroke-width=".12"/>';
-    var ta=points[D.center];
-    markup+='<path d="M '+(ta[0]+.28)+' '+ta[1]+' L '+(ta[0]+.28)+' '+(ta[1]+.28)+' L '+ta[0]+' '+(ta[1]+.28)+'" fill="none" stroke="#b85a13" stroke-width=".1"/>';
+  D.vertices.forEach(function(v){points[v]=v===D.center?D.centerPoint:D.placed[v];});
+  if(D.vertices.every(function(v){return !!points[v];})){
+    markup+='<polygon points="'+D.vertices.map(function(v){return pointString(points[v]);}).join(' ')+'" fill="rgba(184,90,19,.16)" stroke="#b85a13" stroke-width=".12"/>';
+    if(D.shape.rightAngleAtA){
+      var ta=points[D.center];
+      markup+='<path d="M '+(ta[0]+.28)+' '+ta[1]+' L '+(ta[0]+.28)+' '+(ta[1]+.28)+' L '+ta[0]+' '+(ta[1]+.28)+'" fill="none" stroke="#b85a13" stroke-width=".1"/>';
+    }
   }
   D.target.forEach(function(v){
     var p=points[v];
@@ -539,14 +586,14 @@ $('#drawCheck').addEventListener('click',function(){
   if(wrong.length){
     wrong.forEach(function(v){delete D.placed[v];});D.active=wrong[0];
     var advice=wrong.map(function(v){
-      if(v==='B')return 'B′はAと同じ高さで、Aから右へ'+(4*D.k)+'マスだよ。';
-      return 'C′はAと同じ縦の線上で、Aから下へ'+(2*D.k)+'マスだよ。';
+      var p=D.ans[v];
+      return v+'′は、Aから'+relativePositionText(p[0]-D.centerPoint[0],p[1]-D.centerPoint[1])+'の交点だよ。';
     }).join(' ');
     setGuide($('#drawMsg'),'ここを見直そう',advice,'retry','retry');
     renderDraw();
   }else{
-    D.done=true;awardOnce('draw-'+drawIndex,D.hintLevel>0?7:10);
-    setGuide($('#drawMsg'),'正解！','中心から各頂点までの距離が、すべて'+multiplierText(D.k)+'になっているよ。','complete','good');
+    D.done=true;awardOnce('draw-'+D.shape.id+'-'+D.k,D.hintLevel>0?7:10);
+    setGuide($('#drawMsg'),'正解！','Aから各頂点までの横・たての位置が、すべて'+multiplierText(D.k)+'になっているよ。','complete','good');
     renderDraw();
   }
 });
@@ -554,10 +601,13 @@ $('#drawHint').addEventListener('click',function(){
   if(D.done||D.hintLevel>=2)return;
   D.hintLevel++;
   if(D.hintLevel===1){
-    setGuide($('#drawMsg'),'ヒント① 方向','B′はAから右、C′はAから下。もとの辺と同じ方向に置くよ。','hint');
+    setGuide($('#drawMsg'),'ヒント① 方向','Aから各頂点に向かう方向へ置こう。拡大ならAから遠く、縮小なら近くなるよ。','hint');
   }else{
-    var horizontal=4*D.k,vertical=2*D.k;
-    setGuide($('#drawMsg'),'ヒント② 距離','ABは4マスなので、4 × '+D.k+' ＝ '+horizontal+'マス。B′は右へ'+horizontal+'マス。ACは2マスなので、2 × '+D.k+' ＝ '+vertical+'マス。C′は下へ'+vertical+'マスだよ。','hint');
+    var details=D.target.map(function(v){
+      var p=D.shape.points[v],target=D.ans[v],a=D.centerPoint;
+      return v+'：'+relativePositionText(p[0],p[1])+' → '+v+'′：'+relativePositionText(target[0]-a[0],target[1]-a[1]);
+    }).join('。');
+    setGuide($('#drawMsg'),'ヒント② 距離',details+'。それぞれの横・たての距離に倍率をかけよう。','hint');
   }
   renderDraw();
 });
@@ -566,12 +616,13 @@ $('#drawNext').addEventListener('click',function(){
   if(drawIndex<drawProblems.length-1)startDraw(drawIndex+1);
   else{
     markModuleComplete('draw');
-    setGuide($('#drawMsg'),'作図ラボ クリア！','角が変わらないことと、中心からの距離が同じ倍率になることを確認できたね。','complete','good');
-    $('#drawNext').hidden=true;
+    drawProblems=createDrawProblems();
+    startDraw(0);
+    setGuide($('#drawMsg'),'次のセットへ','図形と倍率がランダムに変わったよ。新しい問題で、もう一度作図してみよう。','hint');
   }
 });
 startDraw(0);
-setGuide($('#drawMsg'),'作図のポイント','中心から、たて・横の方眼を数えよう。','hint');
+setGuide($('#drawMsg'),'作図のポイント','Aから各頂点までの向きと距離を見よう。','hint');
 
 var scaleQuestions=[
  {question:'縮尺 1：25,000 の地図で、道のりが4cmでした。実際の道のりは？',lead:'1cmが実際の25,000cmを表します。',options:['100m','1km','10km'],correct:1,note:'4 × 25,000 ＝ 100,000cm。100,000cm ＝ 1,000m ＝ 1kmです。'},
