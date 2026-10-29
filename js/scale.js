@@ -40,7 +40,7 @@ function renderScale(){
         if(optionButton.dataset.correct==='true')optionButton.classList.add('correct');
         else if(optionButton===button)optionButton.classList.add('incorrect');
       });
-      if(good){awardOnce('scale-'+q.id,10,q.legacyIndex===undefined?null:'scale-'+q.legacyIndex);setGuide($('#scaleMsg'),'正解！',q.note,'correct','good');}
+      if(good){window.TTSenseiApp.recordCorrectAnswer('scale',q.id);awardOnce('scale-'+q.id,10,q.legacyIndex===undefined?null:'scale-'+q.legacyIndex);setGuide($('#scaleMsg'),'正解！',q.note,'correct','good');}
       else{setGuide($('#scaleMsg'),'いっしょに確かめよう',q.note,'retry','retry');}
       $('#scaleBar').style.width=((scaleIndex+1)/scaleQuestions.length*100)+'%';
       $('#scaleNext').disabled=false;

@@ -172,7 +172,7 @@ $$('.choice').forEach(function(button){
       if(choice.dataset.answer===(q.yes?'yes':'no'))choice.classList.add('correct');
       else if(choice===button)choice.classList.add('incorrect');
     });
-    if(good){awardOnce('judge-'+q.id,10,'judge-'+q.legacyIndex);setGuide($('#judgeMsg'),'正解！',q.note,'correct','good');}
+    if(good){window.TTSenseiApp.recordCorrectAnswer('judge',q.id);awardOnce('judge-'+q.id,10,'judge-'+q.legacyIndex);setGuide($('#judgeMsg'),'正解！',q.note,'correct','good');}
     else{setGuide($('#judgeMsg'),'おしい！','正解は'+(q.yes?'〇　なっている':'×　なっていない')+'。'+q.note,'retry','retry');}
     $('#judgeBar').style.width=((judgeIndex+1)/judges.length*100)+'%';
     $('#judgeNext').disabled=false;
