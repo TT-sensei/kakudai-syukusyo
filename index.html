@@ -318,6 +318,8 @@ function markModuleComplete(id){
 import('https://tt-sensei.github.io/edu-components/index.js').then(function(module){
   var storage=new module.StorageManager('kakudai-syukusyo');
   learningProgress=new module.ProgressManager({storage:storage,ids:moduleIds});
+  moduleIds.forEach(function(id){if(learningProgress.isCompleted(id))persistedCompleted.add(id);});
+  writeStored(progressStoreKey,Array.from(persistedCompleted));
   completedThisSession.forEach(function(id){learningProgress.complete(id);});
   persistedCompleted.forEach(function(id){learningProgress.complete(id);});
   renderProgress();
