@@ -222,6 +222,7 @@ h1{font-size:clamp(1.45rem,2.5vw,2.1rem);line-height:1.2;letter-spacing:-.025em;
     </div>
     <section class="card">
       <div class="question-title"><div><p class="section-label">DRAWING TASK</p><h2 id="drawQ">第1問</h2></div><span class="question-number" id="drawNumber">1 / 5</span></div>
+      <div class="progress-track"><div class="progress-fill" id="drawBar"></div></div>
       <p class="lead" id="drawHelp"></p>
       <div class="formula draw-formula" id="drawFormula"><b>まずは元の辺の長さを確認</b><p class="mini">横のABは4マス、たてのACは2マス。倍率をかけると、B′・C′までの長さが決まるよ。</p></div>
       <div class="chips" id="chips"></div>
@@ -461,6 +462,7 @@ function renderDraw(){
   var targets=D.target;
   $('#drawQ').textContent='第'+(drawIndex+1)+'問　'+D.center+'を中心に'+multiplierText(D.k)+'の'+(D.k>1?'拡大図':'縮図');
   $('#drawNumber').textContent=(drawIndex+1)+' / '+drawProblems.length;
+  $('#drawBar').style.width=((drawIndex+(D.done?1:0))/drawProblems.length*100)+'%';
   $('#drawHelp').textContent='Aを中心に'+multiplierText(D.k)+'。Aは動かさず、B′は右へ、C′は下へ置く。';
   $('#drawFormula').innerHTML='<b>辺の長さに倍率をかける</b><p class="mini">ABは横に4マス、ACはたてに2マス。B′とC′は、別々に倍率をかけて位置を決めよう。</p>';
   $('#chips').innerHTML=targets.map(function(v){
