@@ -375,7 +375,7 @@ function showMode(mode){
   var panel=$('#'+mode);
   if(!panel)return;
   $('#home').classList.remove('active');
-  $('.panel').forEach(function(item){item.classList.toggle('active',item===panel);});
+  $$('.panel').forEach(function(item){item.classList.toggle('active',item===panel);});
   document.body.classList.add('is-learning');
   window.scrollTo(0,0);
   var back=panel.querySelector('.home-back');
@@ -383,16 +383,16 @@ function showMode(mode){
 }
 function showHome(){
   $('#home').classList.add('active');
-  $('.panel').forEach(function(panel){panel.classList.remove('active');});
+  $$('.panel').forEach(function(panel){panel.classList.remove('active');});
   document.body.classList.remove('is-learning');
   window.scrollTo(0,0);
   var heading=$('#homeHeading');
   if(heading)heading.focus({preventScroll:true});
 }
-$('.tab').forEach(function(button){
+$$('.tab').forEach(function(button){
   button.addEventListener('click',function(){showMode(button.dataset.mode);});
 });
-$('.home-back').forEach(function(button){button.addEventListener('click',showHome);});
+$$('.home-back').forEach(function(button){button.addEventListener('click',showHome);});
 
 var shapes = [
  {id:'isosceles',name:'二等辺三角形',ok:false,svg:'<polygon points="18,79 50,20 82,79"/><polygon points="110,79 131,48 162,79"/>',why:'二等辺三角形は、頂角の大きさがちがうものがあります。2本の辺が等しいだけでは、形は1つに決まりません。'},
