@@ -67,13 +67,16 @@ async function main() {
       const afterFirst = app.getAwardedBadgeIds().length;
       app.recordCorrectAnswer('scale', 'e2e-scale-duplicate');
       const afterSecond = app.getAwardedBadgeIds().length;
-      return { ids: app.getAwardedBadgeIds(), before, afterFirst, afterSecond };
+      const answers = JSON.parse(localStorage.getItem('kakudai-syukusyo:correct-answers:v1') || '{}');
+      const duplicateRecords = (answers.scale || []).filter(id => id === 'e2e-scale-duplicate').length;
+      return { ids: app.getAwardedBadgeIds(), before, afterFirst, afterSecond, duplicateRecords };
     });
     await page.waitForFunction(() => document.querySelectorAll('#badgeGrid .badge-item.is-earned').length === 20, null, { timeout: 10000 });
     assert.equal(resulting.ids.length, 20, '20種類すべてを獲得できる');
     assert.equal(new Set(resulting.ids).size, 20, 'バッジIDが重複しない');
     assert.equal(resulting.afterFirst, resulting.before, '獲得済みのしきい値バッジは増えない');
     assert.equal(resulting.afterSecond, resulting.afterFirst, '同じ正解IDを繰り返しても重複しない');
+    assert.equal(resulting.duplicateRecords, 1, '同じ正解IDは保存記録にも1回だけ残る');
     assert.match(await page.locator('#badgeCount').innerText(), /獲得 20 \/ 20/);
 
     await page.reload({ waitUntil: 'domcontentloaded' });
