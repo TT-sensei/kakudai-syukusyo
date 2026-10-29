@@ -183,7 +183,7 @@ function setGuide(container,title,message,mood,extraClass){
 function shuffle(items){for(var i=items.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),temp=items[i];items[i]=items[j];items[j]=temp;}return items;}
 var groupImage=$('#groupImage');
 if(groupImage)groupImage.addEventListener('error',function(){if(this.dataset.fallback){this.style.display='none';return;}this.dataset.fallback='1';this.src=GROUP_SHAPES;});
-window.TTSenseiApp={$: $, $: $, shuffle:shuffle, setGuide:setGuide, awardOnce:awardOnce, addScore:addScore, markModuleComplete:markModuleComplete, renderProgress:renderProgress, areAllMissionsDone:areAllMissionsDone, readStored:readStored, awardBadge:awardBadge, recordCorrectAnswer:recordCorrectAnswer, getBadgeDefinitions:getBadgeDefinitions, getAwardedBadgeIds:getAwardedBadgeIds, hasBadge:hasBadge};
+window.TTSenseiApp={$: $, $$: $$, shuffle:shuffle, setGuide:setGuide, awardOnce:awardOnce, addScore:addScore, markModuleComplete:markModuleComplete, renderProgress:renderProgress, areAllMissionsDone:areAllMissionsDone, readStored:readStored, awardBadge:awardBadge, recordCorrectAnswer:recordCorrectAnswer, getBadgeDefinitions:getBadgeDefinitions, getAwardedBadgeIds:getAwardedBadgeIds, hasBadge:hasBadge};
 renderProgress();
 syncHistoricalBadges(false);
 showBadgeRewardNotice();
