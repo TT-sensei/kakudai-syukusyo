@@ -708,7 +708,7 @@ function renderScale(){
   var q=scaleQuestions[scaleIndex];
   $('#scaleQ').textContent=q.title;
   renderScaleScene(q);
-  $('#scaleLead').textContent=q.lead;
+  $('#scaleLead').textContent=q.question;
   $('#scaleNumber').textContent='第'+(scaleIndex+1)+'問 / '+scaleQuestions.length;
   $('#scaleBar').style.width=(scaleIndex/scaleQuestions.length*100)+'%';
   var optionItems=q.options.map(function(option,index){return {label:option,correct:index===q.correct};});
@@ -733,7 +733,7 @@ function renderScale(){
       $('#scaleNext').textContent=scaleIndex===scaleQuestions.length-1?'ミッションをふり返る':'次のミッション';
     });
   });
-  setGuide($('#scaleMsg'),'考えるヒント','図の長さから実際の長さを出すときは、縮尺の分母をかけよう。','hint');
+  setGuide($('#scaleMsg'),'考えるヒント',q.lead,'hint');
   $('#scaleNext').disabled=true;$('#scaleNext').textContent=scaleIndex===scaleQuestions.length-1?'ミッションをふり返る':'次のミッション';
   scaleLocked=false;
 }
