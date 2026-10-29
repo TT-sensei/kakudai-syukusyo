@@ -110,8 +110,6 @@ function awardBadge(id,notify){
   if(notify!==false)queueBadgeNotice(id);
   if(badgeManager){
     try{if(!badgeManager.has(id))badgeManager.award(id);}catch(error){/* localStorage側の保存でもコレクションを維持する */}
-  }else if(typeof CustomEvent==='function'){
-    document.dispatchEvent(new CustomEvent('edu:badge',{detail:{id:id,badge:badge,awardedCount:fallbackAwardedBadges.size}}));
   }
   dispatchBadgeChange();
   if(notify!==false)showBadgeRewardNotice();
