@@ -440,6 +440,7 @@ function renderDraw(){
   }).join('');
   $$('.chip').forEach(function(button){button.addEventListener('click',function(){D.active=button.dataset.v;renderDraw();});});
   $('#drawNext').hidden=!D.done;
+  $('#drawNext').textContent=drawIndex===drawProblems.length-1?'作図ラボを終了':'次の問題';
   $('#drawCheck').disabled=D.done;
   $('#drawHint').textContent=D.hintLevel===0?'ヒント① 方向':D.hintLevel===1?'ヒント② 距離':'ヒントを確認済み';
   $('#drawHint').disabled=D.hintLevel>=2||D.done;
