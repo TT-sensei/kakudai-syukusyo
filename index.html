@@ -596,8 +596,8 @@ $('#board').addEventListener('pointerdown',function(event){
   var svg=event.currentTarget,point=svg.createSVGPoint();
   point.x=event.clientX;point.y=event.clientY;
   var transformed=point.matrixTransform(svg.getScreenCTM().inverse());
-  if(transformed.x < -0.1 || transformed.x > 12.1 || transformed.y < -0.1 || transformed.y > 8.1)return;
-  var x=Math.max(0,Math.min(12,Math.round(transformed.x))),y=Math.max(0,Math.min(8,Math.round(transformed.y)));
+  if(transformed.x < -0.1 || transformed.x > 17.1 || transformed.y < -0.1 || transformed.y > 9.1)return;
+  var x=Math.max(0,Math.min(17,Math.round(transformed.x))),y=Math.max(0,Math.min(9,Math.round(transformed.y)));
   D.placed[D.active]=[x,y];
   var next=D.target.filter(function(v){return !D.placed[v];})[0];
   if(next)D.active=next;
