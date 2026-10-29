@@ -453,7 +453,7 @@ function drawBoard(){
   if(D.hintLevel>0){
     D.target.forEach(function(v){
       var a=D.abs[v],cx=D.centerPoint[0],cy=D.centerPoint[1];
-      var factor=D.k>1?D.k+0.55:1;
+      var factor=D.k>1?D.k+0.2:1.25;
       markup+='<line x1="'+cx+'" y1="'+cy+'" x2="'+(cx+(a[0]-cx)*factor)+'" y2="'+(cy+(a[1]-cy)*factor)+'" stroke="#b85a13" stroke-width=".09" stroke-dasharray=".22 .18"/>';
     });
   }
