@@ -433,7 +433,7 @@ function renderJudge(){
   $('#judgeBar').style.width=(judgeIndex/judges.length*100)+'%';
   $('#judgeVisual').innerHTML='<g fill="rgba(35,101,204,.13)" stroke="#2365cc" stroke-width="2.2" stroke-linejoin="round">'+q.a+'</g><g fill="rgba(184,90,19,.13)" stroke="#b85a13" stroke-width="2.2" stroke-linejoin="round">'+q.b+'</g>';
   $('#judgeVisual').setAttribute('aria-label','左の図形と右の図形を比べる問題');
-  $('.choice').forEach(function(button){button.disabled=false;button.classList.remove('correct','incorrect');});
+  $$('.choice').forEach(function(button){button.disabled=false;button.classList.remove('correct','incorrect');});
   $('#judgeNext').disabled=true;$('#judgeNext').textContent='次の問題';
   setGuide($('#judgeMsg'),'考えてみよう','角の大きさと、対応する辺の長さの割合を確かめよう。','hint');
   judgeLocked=false;
@@ -443,7 +443,7 @@ $$('.choice').forEach(function(button){
     if(judgeLocked)return;
     judgeLocked=true;
     var q=judges[judgeIndex],answer=button.dataset.answer==='yes',good=answer===q.yes;
-    $('.choice').forEach(function(choice){
+    $$('.choice').forEach(function(choice){
       choice.disabled=true;
       if(choice.dataset.answer===(q.yes?'yes':'no'))choice.classList.add('correct');
       else if(choice===button)choice.classList.add('incorrect');
@@ -551,7 +551,7 @@ function renderDraw(){
 function drawBoard(){
   var svg=$('#board'),markup='';
   for(var x=0;x<=17;x++)markup+='<line x1="'+x+'" y1="0" x2="'+x+'" y2="9" stroke="#d5dfeb" stroke-width=".045"/>';
-  for(var y=0;y<=9;y++)markup+='<line x1="0" y1="'+y+'" x2="17" y2="'+y+'" stroke="#d5dfeb" stroke-width=".045"/>;'
+  for(var y=0;y<=9;y++)markup+='<line x1="0" y1="'+y+'" x2="17" y2="'+y+'" stroke="#d5dfeb" stroke-width=".045"/>';
   if(D.hintLevel>0){
     D.target.forEach(function(v){
       var a=D.abs[v],cx=D.centerPoint[0],cy=D.centerPoint[1];
