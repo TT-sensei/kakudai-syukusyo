@@ -744,7 +744,8 @@ $('#scaleNext').addEventListener('click',function(){
   else{
     markModuleComplete('scale');
     $$('.tab').filter(function(button){return button.dataset.mode==='explore';})[0].click();
-    setGuide($('#exploreMsg'),'ミッションコンプリート！','形を見つけ、見分け、作図し、縮尺を生活の場面で使えたね。気になるミッションに戻って、さらに練習してみよう。','correct','good');
+    var allMissionsDone=moduleIds.every(function(id){return completedThisSession.has(id)||persistedCompleted.has(id)||(learningProgress&&learningProgress.isCompleted(id));});
+    setGuide($('#exploreMsg'),allMissionsDone?'4つのミッション達成！':'縮尺ミッション達成！',allMissionsDone?'形のきまり・見分ける・作図・縮尺の4つをひと通り練習できたね。得意なところをさらに伸ばそう。':'縮尺を生活の場面で使えたね。ほかのミッションにも挑戦して、形のきまり・見分け・作図とつなげよう。','correct','good');
   }
 });
 $('#scaleRestart').textContent='別の問題セット';
