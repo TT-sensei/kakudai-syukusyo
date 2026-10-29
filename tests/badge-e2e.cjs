@@ -20,8 +20,17 @@ async function main() {
   page.on('pageerror', error => runtimeErrors.push(error.message));
 
   try {
-    let response = await page.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 60000 });
-    assert.equal(response.status(), 200, 'トップページがHTTP 200で開く');
+    let response = null;
+    let latestVersionPublished = false;
+    // Pagesのデプロイはテスト実行と並行することがあるため、新しいキャッシュバージョンが公開されるまで待つ。
+    for (let attempt = 0; attempt < 18; attempt++) {
+      response = await page.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 60000 });
+      latestVersionPublished = await page.locator('script[src*="v=20261029-badges-fix1"]').count() > 0;
+      if (response && response.status() === 200 && latestVersionPublished) break;
+      await page.waitForTimeout(5000);
+    }
+    assert.ok(response && response.status() === 200, 'トップページがHTTP 200で開く');
+    assert.ok(latestVersionPublished, '修正済みJavaScriptを参照する最新版の公開を確認する');
     await page.waitForFunction(() => window.TTSenseiApp && window.KAKUDAI_BADGES?.length === 20, null, { timeout: 20000 });
     await page.waitForFunction(() => document.querySelectorAll('#badgeGrid .badge-item').length === 20, null, { timeout: 10000 });
     assert.equal(await page.locator('#badgeGrid .badge-item').count(), 20, 'コレクションに20種類表示される');
