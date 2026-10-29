@@ -18,6 +18,14 @@ async function main() {
   const runtimeErrors = [];
   const page = await context.newPage();
   page.on('pageerror', error => runtimeErrors.push(error.message));
+  // Pages/CDNが古いHTMLを返しても必ず最新版を検査できるよう、文書リクエストだけ一時URLで取得する。
+  await page.route(/^https:\/\/tt-sensei\.github\.io\/kakudai-syukusyo\//, async route => {
+    const request = route.request();
+    if (request.resourceType() !== 'document') return route.continue();
+    const url = new URL(request.url());
+    url.searchParams.set('e2e_cache_bust', String(Date.now()));
+    return route.continue({ url: url.toString() });
+  });
 
   try {
     let response = null;
@@ -30,6 +38,8 @@ async function main() {
       await page.waitForTimeout(5000);
     }
     assert.ok(response && response.status() === 200, 'トップページがHTTP 200で開く');
+    console.log('Published HTML URL:', page.url());
+    console.log('Updated script reference found:', latestVersionPublished);
     assert.ok(latestVersionPublished, '修正済みJavaScriptを参照する最新版の公開を確認する');
     await page.waitForFunction(() => window.TTSenseiApp && window.KAKUDAI_BADGES?.length === 20, null, { timeout: 20000 });
     await page.waitForFunction(() => document.querySelectorAll('#badgeGrid .badge-item').length === 20, null, { timeout: 10000 });
@@ -38,7 +48,7 @@ async function main() {
     assert.equal(await page.locator('.tab').count(), 4, 'トップに4つのミッションがある');
 
     await page.locator('.tab[href="explore.html"]').click();
-    await page.waitForURL('**/explore.html');
+    await page.waitForURL(url => url.pathname.endsWith('/explore.html'));
     for (const id of ['equilateral', 'square', 'pentagon', 'circle']) {
       await page.locator('.shape-card[data-shape="' + id + '"]').click();
     }
@@ -52,7 +62,7 @@ async function main() {
     await page.waitForURL(url => url.pathname.endsWith('/index.html'));
     assert.match(await page.locator('#badgeCount').innerText(), /獲得 4 \/ 20/);
     await page.locator('.tab[href="scale.html"]').click();
-    await page.waitForURL('**/scale.html');
+    await page.waitForURL(url => url.pathname.endsWith('/scale.html'));
     for (let i = 0; i < 12; i++) {
       const correctOption = page.locator('.scale-option[data-correct="true"]');
       await correctOption.waitFor({ timeout: 5000 });
