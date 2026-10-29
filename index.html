@@ -743,7 +743,7 @@ $('#scaleNext').addEventListener('click',function(){
   if(scaleIndex<scaleQuestions.length-1){scaleIndex++;renderScale();}
   else{
     markModuleComplete('scale');
-    $('.tab').filter(function(button){return button.dataset.mode==='explore';})[0].click();
+    $$('.tab').filter(function(button){return button.dataset.mode==='explore';})[0].click();
     setGuide($('#exploreMsg'),'ミッションコンプリート！','形を見つけ、見分け、作図し、縮尺を生活の場面で使えたね。気になるミッションに戻って、さらに練習してみよう。','correct','good');
   }
 });
