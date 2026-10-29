@@ -396,7 +396,7 @@ $('#exploreReset').addEventListener('click',function(){
 $('#inspectPrev').addEventListener('click',function(){inspectIndex=Math.max(0,inspectIndex-1);showInspect();});
 $('#inspectNext').addEventListener('click',function(){
   if(inspectIndex<shapes.length-1){inspectIndex++;showInspect();}
-  else{$$$('.tab').filter(function(button){return button.dataset.mode==='judge';})[0].click();renderJudge();}
+  else{$$('.tab').filter(function(button){return button.dataset.mode==='judge';})[0].click();renderJudge();}
 });
 renderShapes();
 
