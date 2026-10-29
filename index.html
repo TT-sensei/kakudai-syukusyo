@@ -275,8 +275,15 @@ var NAVI_ROOT = 'https://tt-sensei.github.io/navi-character-/assets/web/characte
 var GROUP_STANDING = 'https://tt-sensei.github.io/navi-character-/assets/web/groups/group-standing.webp';
 var GROUP_SHAPES = 'https://tt-sensei.github.io/navi-character-/assets/web/groups/learning/group-learning-math-shapes.webp';
 var characterIds = ['riku','sora','kai','saku','tsuki','nami'];
-var score = 0;
-function addScore(points){score += points; $('#score').textContent = String(score);}
+var scoreStoreKey='kakudai-syukusyo:score:v1';
+var awardsStoreKey='kakudai-syukusyo:awards:v1';
+function readStored(key,fallback){try{var value=localStorage.getItem(key);return value===null?fallback:JSON.parse(value);}catch(error){return fallback;}}
+function writeStored(key,value){try{localStorage.setItem(key,JSON.stringify(value));}catch(error){/* 保存できない環境でも学習は続けられる */}}
+var score = Number(readStored(scoreStoreKey,0))||0;
+var earnedAwards = new Set(readStored(awardsStoreKey,[]));
+$('#score').textContent=String(score);
+function addScore(points){score += points;$('#score').textContent=String(score);writeStored(scoreStoreKey,score);}
+function awardOnce(key,points){if(earnedAwards.has(key))return false;earnedAwards.add(key);writeStored(awardsStoreKey,Array.from(earnedAwards));addScore(points);return true;}
 var learningProgress = null;
 var completedThisSession = new Set();
 var moduleIds = ['explore','judge','draw','scale'];
@@ -375,7 +382,7 @@ $('#exploreCheck').addEventListener('click',function(){
   });
   if(good){
     markModuleComplete('explore');
-    if(!exploreAwarded){addScore(20);exploreAwarded=true;}
+    if(!exploreAwarded){awardOnce('explore-perfect',20);exploreAwarded=true;}
     setGuide($('#exploreMsg'),'大正解！','正三角形・正方形・正五角形・円だよ。どこが共通しているか、一つずつ調べよう。','correct','good');
   }else{
     setGuide($('#exploreMsg'),'もう一度考えよう','「同じ名前なら、どんな形でも必ず」という言葉が大切。選んだ図形と、選ばなかった図形を比べてみよう。','retry','retry');
@@ -428,7 +435,7 @@ $$('.choice').forEach(function(button){
     judgeLocked=true;
     var q=judges[judgeIndex],answer=button.dataset.answer==='yes',good=answer===q.yes;
     $$('.choice').forEach(function(choice){choice.disabled=true;});
-    if(good){addScore(10);setGuide($('#judgeMsg'),'正解！',q.note,'correct','good');}
+    if(good){awardOnce('judge-'+judgeIndex,10);setGuide($('#judgeMsg'),'正解！',q.note,'correct','good');}
     else{setGuide($('#judgeMsg'),'おしい！',q.note,'retry','retry');}
     $('#judgeBar').style.width=((judgeIndex+1)/judges.length*100)+'%';
     $('#judgeNext').disabled=false;
@@ -538,7 +545,7 @@ $('#drawCheck').addEventListener('click',function(){
     setGuide($('#drawMsg'),'ここを見直そう',advice,'retry','retry');
     renderDraw();
   }else{
-    D.done=true;addScore(D.hintLevel>0?7:10);
+    D.done=true;awardOnce('draw-'+drawIndex,D.hintLevel>0?7:10);
     setGuide($('#drawMsg'),'正解！','中心から各頂点までの距離が、すべて'+multiplierText(D.k)+'になっているよ。','complete','good');
     renderDraw();
   }
@@ -593,7 +600,7 @@ function renderScale(){
         if(Number(optionButton.dataset.option)===q.correct)optionButton.classList.add('correct');
         else if(Number(optionButton.dataset.option)===answer)optionButton.classList.add('incorrect');
       });
-      if(good){addScore(10);setGuide($('#scaleMsg'),'正解！',q.note,'correct','good');}
+      if(good){awardOnce('scale-'+scaleIndex,10);setGuide($('#scaleMsg'),'正解！',q.note,'correct','good');}
       else{setGuide($('#scaleMsg'),'いっしょに確かめよう',q.note,'retry','retry');}
       $('#scaleBar').style.width=((scaleIndex+1)/scaleQuestions.length*100)+'%';
       $('#scaleNext').disabled=false;
