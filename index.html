@@ -21,27 +21,33 @@ header{display:flex;align-items:center;justify-content:space-between;gap:18px;ma
 h1{font-size:clamp(1.45rem,2.5vw,2.1rem);line-height:1.2;letter-spacing:-.025em;margin:0}
 .subtitle{margin:7px 0 0;color:var(--sub);font-size:.94rem}
 .group-image{width:clamp(120px,19vw,205px);height:80px;object-fit:contain;object-position:center right;flex:0 0 auto}
-.study-path{margin:4px 0 12px;padding:10px 13px;background:var(--blue-soft);border-radius:11px;font-size:.9rem;color:var(--ink)}
-.study-path b{color:#174fa9}
-.summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:14px 0}
-.summary div{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
-.summary b{display:block;font-size:.8rem;color:var(--sub);margin-bottom:2px}
-.summary span{font-size:.94rem;font-weight:800}
+.home-screen{display:none}
+.home-screen.active{display:block}
+.home-hero{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:12px 0 4px;padding:20px 22px;background:linear-gradient(115deg,#fff 0%,#eef5ff 100%);border:1px solid #d7e4f4;border-radius:18px}
+.home-hero-copy{min-width:0}
+.home-hero h2{margin:0 0 7px;font-size:clamp(1.35rem,2.4vw,1.85rem);line-height:1.25}
+.home-hero .lead{max-width:660px}
+.home-count{display:flex;flex:0 0 auto;flex-direction:column;align-items:center;justify-content:center;width:92px;height:92px;border-radius:50%;background:#fff;border:1px solid #d1e0f3;color:#2365cc}
+.home-count strong{font-size:2rem;line-height:1;font-weight:900}
+.home-count span{font-size:.62rem;letter-spacing:.09em;font-weight:900;margin-top:5px}
+.home-footnote{margin:12px 3px 0;font-size:.84rem;color:var(--sub)}
 .score{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;color:var(--orange);font-weight:800;background:var(--orange-soft);border-radius:999px;padding:8px 13px}
-.tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:14px 0 12px}
-.tab{min-height:72px;display:grid;grid-template-columns:32px minmax(0,1fr);grid-template-rows:auto auto;align-content:center;align-items:center;column-gap:9px;row-gap:1px;border:1px solid var(--line);border-radius:13px;background:var(--paper);color:var(--ink);font-weight:800;padding:10px 12px;text-align:left;cursor:pointer;transition:border-color .16s,background .16s,transform .16s}
-.tab:hover{border-color:#9db8df;transform:translateY(-1px)}
-.tab .num{grid-row:1/3;display:grid;place-items:center;width:32px;height:32px;border-radius:10px;background:var(--teal-soft);color:var(--teal);font-size:.8rem;font-weight:900}
-.tab-title{font-size:.96rem;line-height:1.25}
-.tab-sub{grid-column:2;color:var(--sub);font-size:.75rem;font-weight:500;line-height:1.3}
+.tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0 0}
+.tab{position:relative;min-height:118px;display:grid;grid-template-columns:42px minmax(0,1fr);grid-template-rows:auto auto auto;align-content:center;align-items:center;column-gap:12px;row-gap:5px;border:1px solid var(--line);border-radius:15px;background:var(--paper);color:var(--ink);font-weight:800;padding:16px 44px 16px 16px;text-align:left;cursor:pointer;transition:border-color .16s,background .16s,transform .16s;box-shadow:0 3px 12px rgba(28,55,84,.035)}
+.tab:after{content:"→";position:absolute;right:16px;bottom:15px;color:var(--blue);font-size:1.25rem;font-weight:800}
+.tab:hover{border-color:#9db8df;background:#fbfdff;transform:translateY(-1px)}
+.tab .num{grid-row:1/4;display:grid;place-items:center;width:42px;height:42px;border-radius:13px;background:var(--teal-soft);color:var(--teal);font-size:.92rem;font-weight:900}
+.tab-title{font-size:1.02rem;line-height:1.25}
+.tab-sub{grid-column:2;color:var(--sub);font-size:.83rem;font-weight:500;line-height:1.4}
 .tab-status{grid-column:2}
-.tab-status{font-size:.72rem;color:var(--green);font-weight:800;min-height:1em}
+.tab-status{font-size:.75rem;color:var(--green);font-weight:800;min-height:1em}
 .tab-status:empty{display:none}
-.tab.active{border:2px solid var(--blue);background:var(--blue-soft);color:#174fa9;padding:9px 11px}
-.tab.active .num{background:var(--blue);color:#fff}
-.tab.active .tab-sub{color:#315c95}
+body.is-learning .subtitle,body.is-learning .group-image{display:none}
 .panel{display:none}
 .panel.active{display:block}
+.panel-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:3px 0 12px}
+.panel-toolbar .btn{min-height:40px;padding:7px 12px}
+.panel-step{font-size:.75rem;letter-spacing:.06em;font-weight:800;color:var(--sub)}
 .layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(260px,1fr);gap:14px;align-items:start}
 .card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow);min-width:0}
 .card+.card{margin-top:12px}
@@ -116,8 +122,8 @@ h1{font-size:clamp(1.45rem,2.5vw,2.1rem);line-height:1.2;letter-spacing:-.025em;
 .note{padding:10px 12px;background:var(--orange-soft);border-radius:10px;font-size:.9rem;margin-top:10px}
 .footer{padding:18px 4px 0;font-size:.78rem;color:var(--sub)}
 [hidden]{display:none!important}
-@media(max-width:850px){.app{padding:13px 12px 24px}.layout,.stage{grid-template-columns:1fr}.shape-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.group-image{width:125px;height:58px}.summary{grid-template-columns:repeat(2,minmax(0,1fr))}.tabs{grid-template-columns:repeat(4,minmax(0,1fr))}.tab{font-size:.87rem;text-align:center;padding:8px 5px}.tab.active{padding:7px 4px}.board{max-height:370px}}
-@media(max-width:560px){header{align-items:flex-start}.group-image{display:none}.subtitle{font-size:.88rem}.tabs{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.tab{text-align:left;font-size:.91rem;padding:9px;min-height:70px;column-gap:7px}.tab.active{padding:8px}.tab .num{width:28px;height:28px}.tab-title{font-size:.88rem}.tab-sub,.tab-status{font-size:.7rem}.shape-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.shape-card{min-height:140px}.rule-grid{grid-template-columns:1fr}.inspect{grid-template-columns:1fr}.inspect svg{max-height:100px}.scale-scene{grid-template-columns:82px minmax(0,1fr);gap:9px;padding:9px}.scene-art{min-height:78px;padding:4px}.scene-art svg{height:66px}.scene-copy p{font-size:.84rem}.scene-facts span{font-size:.72rem}.scale-options{grid-template-columns:1fr}.score{padding:7px 10px;font-size:.86rem}.card{padding:13px}.choice-grid{gap:7px}}
+@media(max-width:850px){.app{padding:13px 12px 24px}.layout,.stage{grid-template-columns:1fr}.shape-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.group-image{width:125px;height:58px}.tabs{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.tab{min-height:110px;padding:14px 42px 14px 14px;text-align:left}.board{max-height:370px}}
+@media(max-width:560px){header{align-items:flex-start}.group-image{display:none}.subtitle{font-size:.88rem}.home-hero{padding:16px;gap:10px}.home-count{width:64px;height:64px}.home-count strong{font-size:1.55rem}.home-count span{font-size:.52rem}.tabs{grid-template-columns:1fr;gap:9px}.tab{min-height:98px;font-size:.91rem;padding:12px 42px 12px 12px;column-gap:9px}.tab .num{width:36px;height:36px;border-radius:11px}.tab-title{font-size:.94rem}.tab-sub{font-size:.8rem}.panel-toolbar{margin-top:0}.panel-step{font-size:.67rem}.shape-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.shape-card{min-height:140px}.rule-grid{grid-template-columns:1fr}.inspect{grid-template-columns:1fr}.inspect svg{max-height:100px}.scale-scene{grid-template-columns:82px minmax(0,1fr);gap:9px;padding:9px}.scene-art{min-height:78px;padding:4px}.scene-art svg{height:66px}.scene-copy p{font-size:.84rem}.scene-facts span{font-size:.72rem}.scale-options{grid-template-columns:1fr}.score{padding:7px 10px;font-size:.86rem}.card{padding:13px}.choice-grid{gap:7px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -133,23 +139,28 @@ h1{font-size:clamp(1.45rem,2.5vw,2.1rem);line-height:1.2;letter-spacing:-.025em;
   <div class="score" aria-live="polite">★ <span id="score">0</span>点</div>
 </header>
 
-<p class="study-path"><b>4つのミッション</b>　形を見つける → 拡大図・縮図を見分ける → 方眼でかく → 地図や設計図に生かす。順番に進んでも、気になるミッションから挑戦してもOK！</p>
+<section id="home" class="home-screen active" aria-labelledby="homeHeading">
+  <div class="home-hero">
+    <div class="home-hero-copy">
+      <p class="section-label">START HERE</p>
+      <h2 id="homeHeading" tabindex="-1">どのミッションに挑戦する？</h2>
+      <p class="lead">形のきまりを見つけ、作図でたしかめ、最後は地図や設計図に生かそう。</p>
+    </div>
+    <div class="home-count" aria-label="4つのミッション">
+      <strong>4</strong><span>MISSIONS</span>
+    </div>
+  </div>
+  <nav class="tabs" aria-label="ミッションを選ぶ">
+    <button class="tab" data-mode="explore"><span class="num">01</span><span class="tab-title">形のきまり</span><span class="tab-sub">対応する角や辺の比に注目して、形の共通点を見つける</span><span class="tab-status" id="status-explore"></span></button>
+    <button class="tab" data-mode="judge"><span class="num">02</span><span class="tab-title">見分ける</span><span class="tab-sub">角の大きさと辺の長さの比から、拡大図・縮図か判断する</span><span class="tab-status" id="status-judge"></span></button>
+    <button class="tab" data-mode="draw"><span class="num">03</span><span class="tab-title">作図ラボ</span><span class="tab-sub">中心からの方向と距離を考えて、方眼に図形をかく</span><span class="tab-status" id="status-draw"></span></button>
+    <button class="tab" data-mode="scale"><span class="num">04</span><span class="tab-title">縮尺ミッション</span><span class="tab-sub">地図や間取り図を使って、実際の長さを求める</span><span class="tab-status" id="status-scale"></span></button>
+  </nav>
+  <p class="home-footnote">カードを押すと、そのミッションの学習画面に移動します。終わったら一覧に戻って、別のミッションにも挑戦できます。</p>
+</section>
 
-<div class="summary" aria-label="この単元の4つのポイント">
-  <div><b>角</b><span>対応する角は等しい</span></div>
-  <div><b>辺</b><span>辺の長さの比は一定</span></div>
-  <div><b>中心</b><span>距離も同じ倍率に</span></div>
-  <div><b>縮尺</b><span>実際の長さに直す</span></div>
-</div>
-
-<nav class="tabs" aria-label="学習モード">
-  <button class="tab active" data-mode="explore"><span class="num">01</span><span class="tab-title">形のきまり</span><span class="tab-sub">共通点を発見</span><span class="tab-status" id="status-explore"></span></button>
-  <button class="tab" data-mode="judge"><span class="num">02</span><span class="tab-title">見分ける</span><span class="tab-sub">角と辺をチェック</span><span class="tab-status" id="status-judge"></span></button>
-  <button class="tab" data-mode="draw"><span class="num">03</span><span class="tab-title">作図ラボ</span><span class="tab-sub">方眼でかいてみる</span><span class="tab-status" id="status-draw"></span></button>
-  <button class="tab" data-mode="scale"><span class="num">04</span><span class="tab-title">縮尺ミッション</span><span class="tab-sub">くらしの中で活用</span><span class="tab-status" id="status-scale"></span></button>
-</nav>
-
-<section id="explore" class="panel active">
+<section id="explore" class="panel">
+  <div class="panel-toolbar"><button type="button" class="btn secondary home-back">← ミッション一覧</button><span class="panel-step">MISSION 01 / 04</span></div>
   <div class="layout">
     <div>
       <section class="card goal">
@@ -199,6 +210,7 @@ h1{font-size:clamp(1.45rem,2.5vw,2.1rem);line-height:1.2;letter-spacing:-.025em;
 </section>
 
 <section id="judge" class="panel">
+  <div class="panel-toolbar"><button type="button" class="btn secondary home-back">← ミッション一覧</button><span class="panel-step">MISSION 02 / 04</span></div>
   <div class="layout">
     <div class="card">
       <div class="question-title"><div><p class="section-label">CHECK</p><h2 id="judgeQ">この2つの図形は、拡大図・縮図の関係？</h2></div><span class="question-number" id="judgeNumber">第1問</span></div>
@@ -226,6 +238,7 @@ h1{font-size:clamp(1.45rem,2.5vw,2.1rem);line-height:1.2;letter-spacing:-.025em;
 </section>
 
 <section id="draw" class="panel">
+  <div class="panel-toolbar"><button type="button" class="btn secondary home-back">← ミッション一覧</button><span class="panel-step">MISSION 03 / 04</span></div>
   <div class="card goal" style="margin-bottom:12px">
     <p class="section-label">DRAW</p>
     <h2>三角形や四角形を、拡大・縮小してかこう</h2>
@@ -258,6 +271,7 @@ h1{font-size:clamp(1.45rem,2.5vw,2.1rem);line-height:1.2;letter-spacing:-.025em;
 </section>
 
 <section id="scale" class="panel">
+  <div class="panel-toolbar"><button type="button" class="btn secondary home-back">← ミッション一覧</button><span class="panel-step">MISSION 04 / 04</span></div>
   <div class="layout">
     <div class="card">
       <p class="section-label">APPLICATION MISSION</p>
@@ -357,12 +371,28 @@ $('#groupImage').addEventListener('error',function(){
   if(this.dataset.fallback){this.style.display='none';return;}
   this.dataset.fallback='1';this.src=GROUP_SHAPES;
 });
-$$('.tab').forEach(function(button){
-  button.addEventListener('click',function(){
-    $$('.tab').forEach(function(item){item.classList.toggle('active',item===button);});
-    $$('.panel').forEach(function(panel){panel.classList.toggle('active',panel.id===button.dataset.mode);});
-  });
+function showMode(mode){
+  var panel=$('#'+mode);
+  if(!panel)return;
+  $('#home').classList.remove('active');
+  $('.panel').forEach(function(item){item.classList.toggle('active',item===panel);});
+  document.body.classList.add('is-learning');
+  window.scrollTo(0,0);
+  var back=panel.querySelector('.home-back');
+  if(back)back.focus({preventScroll:true});
+}
+function showHome(){
+  $('#home').classList.add('active');
+  $('.panel').forEach(function(panel){panel.classList.remove('active');});
+  document.body.classList.remove('is-learning');
+  window.scrollTo(0,0);
+  var heading=$('#homeHeading');
+  if(heading)heading.focus({preventScroll:true});
+}
+$('.tab').forEach(function(button){
+  button.addEventListener('click',function(){showMode(button.dataset.mode);});
 });
+$('.home-back').forEach(function(button){button.addEventListener('click',showHome);});
 
 var shapes = [
  {id:'isosceles',name:'二等辺三角形',ok:false,svg:'<polygon points="18,79 50,20 82,79"/><polygon points="110,79 131,48 162,79"/>',why:'二等辺三角形は、頂角の大きさがちがうものがあります。2本の辺が等しいだけでは、形は1つに決まりません。'},
